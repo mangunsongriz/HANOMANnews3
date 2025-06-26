@@ -2,66 +2,162 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HANOMAN NEWS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HANOMAN III NEWS</title>
   <style>
     body {
       font-family: 'Courier New', Courier, monospace;
-      background: url('https://i.imgur.com/U9ZSkdr.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #e0e0e0;
+      background-color: #000;
+      background-image:
+        radial-gradient(circle at center, rgba(0,255,0,0.05), transparent 70%),
+        repeating-radial-gradient(circle at center, rgba(255,0,0,0.02) 0 2px, transparent 3px 6px);
+      color: #00ff00;
       margin: 0;
       padding: 20px;
+      user-select: none;
     }
+
     header {
       text-align: center;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      margin-bottom: 20px;
-      border-radius: 10px;
+      padding: 20px 10px;
+      background: rgba(0, 0, 0, 0.85);
+      margin-bottom: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00ff00aa;
+      border: 2px solid #00ff00;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
+
     h1 {
       margin: 0;
-      font-size: 2.5em;
+      font-size: 3em;
       color: #00ff00;
+      text-shadow:
+        0 0 5px #00ff00,
+        0 0 10px #00ff00,
+        0 0 20px #00ff00,
+        0 0 30px #0f0;
     }
+
+    header p {
+      font-style: italic;
+      font-size: 1.1em;
+      color: #a0ffa0;
+      margin-top: 5px;
+    }
+
     nav {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
+
     nav button {
       background-color: #111;
       color: #00ff00;
-      border: 1px solid #00ff00;
-      padding: 10px 15px;
-      margin: 5px;
+      border: 2px solid #00ff00;
+      padding: 12px 20px;
+      margin: 5px 8px;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 8px #00ff00aa;
     }
+
     nav button:hover {
-      background-color: #00ff00;
+      background-color: #ff0000;
       color: #111;
+      border-color: #ff0000;
+      box-shadow:
+        0 0 12px #ff0000cc,
+        0 0 20px #ff0000cc;
+      transform: scale(1.05);
     }
+
+    #berita-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      min-height: 200px;
+    }
+
     .news-item {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 10px;
-      margin: 10px 0;
-      border-left: 5px solid #00ff00;
-      border-radius: 5px;
-    }
-    .category {
-      font-weight: bold;
-      color: #ffcc00;
-    }
-    .date {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 12px 14px;
+      border-radius: 10px;
+      box-shadow:
+        0 0 12px 1.5px #00ff00aa,
+        inset 0 0 8px 1px #00ff0044;
+      transition: box-shadow 0.3s ease, background-color 0.25s ease;
+      user-select: none;
       font-size: 0.9em;
-      color: #ccc;
     }
+
+    .news-item:hover {
+      background-color: rgba(0, 255, 0, 0.15);
+      box-shadow:
+        0 0 22px 3px #00ff00dd,
+        inset 0 0 15px 2px #00ff0066;
+    }
+
+    .news-item img {
+      width: 100%;
+      max-height: 110px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      box-shadow: 0 0 8px #00ff00bb;
+      user-select: none;
+    }
+
+    .category {
+      display: inline-block;
+      font-weight: 900;
+      color: #ff0000;
+      border: 2px solid #ff0000;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 6px #ff0000cc;
+      margin-bottom: 8px;
+      font-size: 0.75em;
+    }
+
+    .date {
+      font-size: 0.75em;
+      color: #aaa;
+      font-style: italic;
+      margin-top: 10px;
+      user-select: text;
+    }
+
+    @media (max-width: 900px) {
+      #berita-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      #berita-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .footer {
       text-align: center;
-      margin-top: 30px;
+      margin-top: 40px;
       font-size: 0.8em;
-      color: #999;
+      color: #555;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px;
+      user-select: none;
+      text-transform: uppercase;
+      text-shadow: 0 0 3px #000;
     }
   </style>
 </head>
@@ -91,96 +187,252 @@
 
   <script>
     const feeds = {
-  nasional: 'https://www.antaranews.com/rss/nasional.xml',
-  nasional2: 'https://nasional.kompas.com/rss',
-  nasional3: 'https://republika.co.id/rss/nasional',
-  nasional4: 'https://www.sindonews.com/feed/nasional',
-  nasional5: 'https://www.liputan6.com/rss/nasional',
-  nasional6: 'https://www.jpnn.com/index.php?mib=rss&id=5',
-  nasional7: 'https://www.merdeka.com/rss/nasional',
-  internasional: 'https://www.antaranews.com/rss/internasional.xml',
-  internasional2: 'https://www.bbc.com/indonesia/index.xml',
-  internasional3: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
-  internasional4: 'https://www.aljazeera.com/xml/rss/all.xml',
-  internasional5: 'https://feeds.bbci.co.uk/news/world/rss.xml',
-  ekonomi: 'https://www.antaranews.com/rss/ekonomi.xml',
-  ekonomi2: 'https://ekonomi.kompas.com/rss',
-  ekonomi3: 'https://www.cnbcindonesia.com/rss',
-  ekonomi4: 'https://finance.detik.com/rss',
-  ekonomi5: 'https://bisnis.tempo.co/rss/nasional',
-  papua: 'https://kabarpapua.co/feed/',
-  papua2: 'https://www.papuapos.com/feed/',
-  papua3: 'https://www.papuatoday.com/feed/',
-  papua4: 'https://www.tabloidjubi.com/feed/',
-  papua5: 'https://seputarpapua.com/feed/',
-  maluku: 'https://beritamalukuonline.com/feed/',
-  maluku2: 'https://www.satumaluku.id/feed/',
-  maluku3: 'https://ambonexpress.com/feed/',
-  maluku4: 'https://kabarindonesianews.com/feed/',
-  maluku5: 'https://www.rri.co.id/rss/regional/maluku',
-  regional: 'https://www.rri.co.id/rss/regional',
-  regional2: 'https://www.malukunews.co/rss.xml',
-  regional3: 'https://regional.kompas.com/rss',
-  regional4: 'https://www.liputan6.com/rss/regional',
-  regional5: 'https://daerah.sindonews.com/rss',
-  cyber: 'https://www.antaranews.com/rss/tekno.xml',
-  cyber2: 'https://tekno.kompas.com/rss',
-  cyber3: 'https://www.cnnindonesia.com/teknologi/rss',
-  cyber4: 'https://www.liputan6.com/rss/tekno',
-  cyber5: 'https://tekno.tempo.co/rss/it',
-  hotzone: 'https://www.antaranews.com/rss/hukum.xml',
-  hotzone2: 'https://www.cnnindonesia.com/nasional/rss',
-  hotzone3: 'https://news.detik.com/rss',
-  hotzone4: 'https://www.tribunnews.com/rss/nasional',
-  hotzone5: 'https://www.jpnn.com/index.php?mib=rss&id=2'
-};
+      nasional: [
+        'https://www.antaranews.com/rss/nasional.xml',
+        'https://nasional.kompas.com/rss',
+        'https://republika.co.id/rss/nasional',
+        'https://www.sindonews.com/feed/nasional',
+        'https://www.liputan6.com/rss/nasional',
+        'https://www.jpnn.com/index.php?mib=rss&id=5',
+        'https://www.merdeka.com/rss/nasional',
+        'https://www.cnnindonesia.com/nasional/rss',
+        'https://www.detik.com/rss/indeks/nasional',
+        'https://www.tribunnews.com/rss/nasional',
+        'https://www.okezone.com/rss/nasional',
+        'https://www.tempo.co/rss/nasional',
+        'https://www.beritasatu.com/rss/nasional',
+        'https://www.viva.co.id/rss/indeks/nasional',
+        'https://news.metrotvnews.com/rss/nasional',
+        'https://www.liputan6.com/rss/nasional',
+        'https://www.kumparan.com/rss/nasional',
+        'https://www.radaronline.id/rss/nasional',
+        'https://www.indozone.id/rss/nasional',
+        'https://www.bisnis.com/rss/nasional'
+      ],
+      internasional: [
+        'https://www.antaranews.com/rss/internasional.xml',
+        'https://www.bbc.com/indonesia/index.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+        'https://www.aljazeera.com/xml/rss/all.xml',
+        'https://feeds.bbci.co.uk/news/world/rss.xml',
+        'https://www.cnn.com/services/rss/',
+        'https://www.reuters.com/tools/rss',
+        'https://www.npr.org/rss/rss.php?id=1004',
+        'https://www.washingtonpost.com/rss/world',
+        'https://www.theguardian.com/world/rss',
+        'https://www.euronews.com/rss?format=xml',
+        'https://www.france24.com/en/rss',
+        'https://www.dw.com/en/top-stories/s-9097?format=rss',
+        'https://www.rt.com/rss/news/',
+        'https://news.sky.com/feeds/rss/world.xml',
+        'https://www.aljazeera.com/xml/rss/all.xml',
+        'https://www.nbcnews.com/id/3032091/device/rss/rss.xml',
+        'https://www.usatoday.com/rss/news/world',
+        'https://www.voanews.com/api/zmg.xml',
+        'https://www.cbsnews.com/latest/rss/world'
+      ],
+      ekonomi: [
+        'https://www.antaranews.com/rss/ekonomi.xml',
+        'https://ekonomi.kompas.com/rss',
+        'https://www.cnbcindonesia.com/rss',
+        'https://finance.detik.com/rss',
+        'https://bisnis.tempo.co/rss/nasional',
+        'https://www.investing.com/rss/news.rss',
+        'https://www.liputan6.com/rss/ekonomi',
+        'https://www.kontan.co.id/rss',
+        'https://www.idx.co.id/berita/rss',
+        'https://www.beritasatu.com/rss/ekonomi',
+        'https://www.viva.co.id/rss/indeks/ekonomi',
+        'https://www.finance.detik.com/rss',
+        'https://www.tribunnews.com/rss/ekonomi',
+        'https://www.cnnindonesia.com/ekonomi/rss',
+        'https://www.metrotvnews.com/rss/ekonomi',
+        'https://www.swa.co.id/rss',
+        'https://www.bisnis.com/rss/ekonomi',
+        'https://www.thejakartapost.com/feed/',
+        'https://www.reuters.com/finance/rss',
+        'https://www.forbes.com/real-time/feed2/'
+      ],
+      papua: [
+        'https://kabarpapua.co/feed/',
+        'https://www.papuapos.com/feed/',
+        'https://www.papuatoday.com/feed/',
+        'https://www.tabloidjubi.com/feed/',
+        'https://seputarpapua.com/feed/',
+        'https://www.rri.co.id/rss/regional/papua',
+        'https://www.suaramerauke.com/feed/',
+        'https://www.papuanews.id/feed/',
+        'https://www.tribunnews.com/rss/regional/papua',
+        'https://www.cenderawasihpos.com/feed/',
+        'https://papua.tribunnews.com/rss',
+        'https://www.antaranews.com/rss/regional/papua',
+        'https://www.suarapapua.com/feed/',
+        'https://www.beritapapua.net/feed/',
+        'https://papua.go.id/feed/',
+        'https://www.meraukeonline.com/feed/',
+        'https://papua.go.id/rss',
+        'https://www.suarapapua.com/rss',
+        'https://www.suaranews.com/feed/',
+        'https://www.koran-jakarta.com/feed/'
+      ],
+      maluku: [
+        'https://beritamalukuonline.com/feed/',
+        'https://www.satumaluku.id/feed/',
+        'https://ambonexpress.com/feed/',
+        'https://kabarindonesianews.com/feed/',
+        'https://www.rri.co.id/rss/regional/maluku',
+        'https://malukupost.com/feed/',
+        'https://www.pagiambon.com/feed/',
+        'https://beritamaluku.com/feed/',
+        'https://www.tribunnews.com/rss/regional/maluku',
+        'https://www.antaranews.com/rss/regional/maluku',
+        'https://ambon.tribunnews.com/rss',
+        'https://www.liputan6.com/rss/regional/maluku',
+        'https://www.malukunews.co/feed/',
+        'https://maluku.tribunnews.com/rss',
+        'https://www.antarafoto.com/rss/maluku',
+        'https://beritamaluku.com/feed/',
+        'https://www.ambonpos.com/feed/',
+        'https://malukupost.id/feed/',
+        'https://suaramaluku.com/feed/',
+        'https://www.malukuonline.com/feed/'
+      ],
+      regional: [
+        'https://www.rri.co.id/rss/regional',
+        'https://www.malukunews.co/rss.xml',
+        'https://regional.kompas.com/rss',
+        'https://www.liputan6.com/rss/regional',
+        'https://daerah.sindonews.com/rss',
+        'https://www.tribunnews.com/rss/regional',
+        'https://regional.tempo.co/rss',
+        'https://regional.okezone.com/rss',
+        'https://regional.kontan.co.id/rss',
+        'https://www.antaranews.com/rss/regional',
+        'https://www.cnnindonesia.com/daerah/rss',
+        'https://www.metrotvnews.com/rss/daerah',
+        'https://www.viva.co.id/rss/indeks/regional',
+        'https://www.liputan6.com/rss/daerah',
+        'https://www.jpnn.com/index.php?mib=rss&id=8',
+        'https://regionalnews.id/feed/',
+        'https://www.suara.com/rss/daerah',
+        'https://daerah.sindonews.com/feed/',
+        'https://rss.detik.com/index.php/detikcom/regional',
+        'https://news.detik.com/rss/indeks/daerah'
+      ],
+      cyber: [
+        'https://www.antaranews.com/rss/tekno.xml',
+        'https://tekno.kompas.com/rss',
+        'https://www.cnnindonesia.com/teknologi/rss',
+        'https://www.liputan6.com/rss/tekno',
+        'https://tekno.tempo.co/rss/it',
+        'https://www.detik.com/rss/indeks/tekno',
+        'https://www.tribunnews.com/rss/tekno',
+        'https://www.okezone.com/rss/tekno',
+        'https://www.viva.co.id/rss/indeks/tekno',
+        'https://www.suara.com/rss/tekno',
+        'https://www.metrotvnews.com/rss/tekno',
+        'https://www.cnbcindonesia.com/rss/tekno',
+        'https://www.teknoinside.com/feed/',
+        'https://www.gizmochina.com/feed/',
+        'https://www.androidauthority.com/feed/',
+        'https://www.techradar.com/rss',
+        'https://www.engadget.com/rss.xml',
+        'https://www.theverge.com/rss/index.xml',
+        'https://www.wired.com/feed/rss',
+        'https://arstechnica.com/feed/'
+      ],
+      hotzone: [
+        'https://www.antaranews.com/rss/hukum.xml',
+        'https://www.cnnindonesia.com/nasional/rss',
+        'https://news.detik.com/rss',
+        'https://www.tribunnews.com/rss/nasional',
+        'https://www.jpnn.com/index.php?mib=rss&id=2',
+        'https://www.okezone.com/rss/hukum',
+        'https://www.viva.co.id/rss/indeks/hukum',
+        'https://www.liputan6.com/rss/hukum',
+        'https://www.beritasatu.com/rss/hukum',
+        'https://www.tempo.co/rss/hukum',
+        'https://www.metrotvnews.com/rss/hukum',
+        'https://www.antaranews.com/rss/hukum.xml',
+        'https://www.sindonews.com/feed/hukum',
+        'https://www.tribunnews.com/rss/hukum',
+        'https://news.okezone.com/rss/hukum',
+        'https://nasional.kompas.com/rss/hukum',
+        'https://www.cnnindonesia.com/nasional/hukum/rss',
+        'https://www.jpnn.com/index.php?mib=rss&id=13',
+        'https://www.detik.com/rss/indeks/hukum',
+        'https://www.cnnindonesia.com/nasional/rss'
+      ]
+    };
+
+    let currentCategory = 'all';
 
     function fetchRSS(category) {
+      currentCategory = category;
       const container = document.getElementById("berita-container");
       container.innerHTML = "Memuat berita...";
 
       if (category === 'all') {
-        Promise.all(Object.values(feeds).map(url => loadFeed(url))).then(all => {
+        const allFeeds = Object.values(feeds).flat();
+        Promise.all(allFeeds.map(url => loadFeed(url, 'Umum'))).then(all => {
           const flat = all.flat();
           renderNews(flat);
         });
       } else {
-        const url = feeds[category];
-        loadFeed(url).then(renderNews);
+        const urls = feeds[category];
+        if (!urls) {
+          container.innerHTML = "Kategori tidak ditemukan.";
+          return;
+        }
+        Promise.all(urls.map(url => loadFeed(url, category))).then(all => {
+          const flat = all.flat();
+          renderNews(flat);
+        });
       }
     }
 
-    function loadFeed(url) {
+    function loadFeed(url, category) {
       return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => data.items.map(item => ({
-  title: item.title,
-  thumbnail: item.thumbnail || item.enclosure?.link || '',
+          title: item.title,
+          thumbnail: item.thumbnail || item.enclosure?.link || '',
           date: item.pubDate.split(' ')[0],
-          category: '',
-  fullDate: item.pubDate
+          category: category,
+          fullDate: item.pubDate
         })))
-        .catch(err => [{ title: "Gagal memuat RSS: " + url, date: '', category: '' }]);
+        .catch(err => [{ title: "Gagal memuat RSS: " + url, date: '', category: category }]);
     }
 
     function renderNews(newsArray) {
       const container = document.getElementById("berita-container");
       container.innerHTML = "";
+      if(newsArray.length === 0) {
+        container.innerHTML = "<p>Tidak ada berita tersedia.</p>";
+        return;
+      }
+
       newsArray.forEach(news => {
         const item = document.createElement("div");
         item.className = "news-item";
         item.innerHTML = `
-  <div class='category'>${news.category}</div>
-  ${news.thumbnail ? `<img src='${news.thumbnail}' alt='thumbnail' style='width:100%;max-height:200px;object-fit:cover;border-radius:5px;margin:10px 0;'/>` : ''}
-  <div><strong>${news.title}</strong></div>
-  <div class='date'>${news.fullDate}</div>
-`;
+          <div class='category'>${news.category}</div>
+          ${news.thumbnail ? `<img src='${news.thumbnail}' alt='thumbnail' loading='lazy'/>` : ''}
+          <div><strong>${news.title}</strong></div>
+          <div class='date'>${news.fullDate}</div>
+        `;
         container.appendChild(item);
       });
     }
+
+    // Auto refresh tiap 5 menit (300000 ms)
+    setInterval(() => {
+      fetchRSS(currentCategory);
+    }, 300000);
 
     // Load default (semua)
     fetchRSS('all');
   </script>
 </body>
 </html>
+
