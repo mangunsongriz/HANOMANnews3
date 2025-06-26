@@ -1,100 +1,186 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HANOMAN NEWS</title>
-  <!-- Tambahkan background intelijen -->
   <style>
     body {
-      background: url('https://images.unsplash.com/photo-1635993631736-f6d84297a422?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: #f0f0f0;
       font-family: 'Courier New', Courier, monospace;
+      background: url('https://i.imgur.com/U9ZSkdr.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 20px;
     }
-    label, input, #clock, #visitorCount {
-      color: #f0f0f0;
+    header {
+      text-align: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #00ff00;
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    nav button {
+      background-color: #111;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    nav button:hover {
+      background-color: #00ff00;
+      color: #111;
     }
     .news-item {
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       padding: 10px;
-      margin: 10px;
-      border-radius: 8px;
+      margin: 10px 0;
+      border-left: 5px solid #00ff00;
+      border-radius: 5px;
+    }
+    .category {
+      font-weight: bold;
+      color: #ffcc00;
+    }
+    .date {
+      font-size: 0.9em;
+      color: #ccc;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8em;
+      color: #999;
     }
   </style>
 </head>
 <body>
-  <h1 style="text-align:center;">HANOMAN NEWS</h1>
+  <header>
+    <h1>HANOMAN NEWS</h1>
+    <p>Portal Intelijen Nasional</p>
+  </header>
 
-  <!-- Menu utama -->
-  <div style="padding: 10px; text-align: center;">
-    <label for="datePicker">Pilih Tanggal Berita:</label>
-    <input type="date" id="datePicker" onchange="filterByDate()" />
+  <nav>
+    <button onclick="fetchRSS('all')">Semua</button>
+    <button onclick="fetchRSS('nasional')">Nasional</button>
+    <button onclick="fetchRSS('papua')">Papua</button>
+    <button onclick="fetchRSS('maluku')">Maluku</button>
+    <button onclick="fetchRSS('regional')">Regional</button>
+    <button onclick="fetchRSS('internasional')">Internasional</button>
+    <button onclick="fetchRSS('cyber')">Cyber</button>
+    <button onclick="fetchRSS('hotzone')">Hot Zone</button>
+    <button onclick="fetchRSS('ekonomi')">Ekonomi</button>
+  </nav>
+
+  <div id="berita-container">Memuat berita terkini...</div>
+
+  <div class="footer">
+    &copy; 2025 HANOMAN NEWS - Dibangun untuk ketahanan informasi nasional.
   </div>
-
-  <!-- Jam dan tanggal sekarang -->
-  <div style="text-align: center; font-size: 14px; color: #ccc; margin-bottom: 5px;">
-    <span id="clock"></span>
-  </div>
-
-  <!-- Jumlah pengunjung -->
-  <div style="text-align: center; font-size: 13px; color: #999; margin-bottom: 15px;">
-    Total pengunjung: <span id="visitorCount">0</span>
-  </div>
-
-  <!-- Kontainer berita -->
-  <div id="newsContainer" style="padding: 0 20px;"></div>
 
   <script>
-    function updateClock() {
-      const now = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const timeString = now.toLocaleTimeString();
-      const dateString = now.toLocaleDateString('id-ID', options);
-      document.getElementById("clock").innerHTML = `${dateString} - ${timeString}`;
+    const feeds = {
+  nasional: 'https://www.antaranews.com/rss/nasional.xml',
+  nasional2: 'https://nasional.kompas.com/rss',
+  nasional3: 'https://republika.co.id/rss/nasional',
+  nasional4: 'https://www.sindonews.com/feed/nasional',
+  nasional5: 'https://www.liputan6.com/rss/nasional',
+  nasional6: 'https://www.jpnn.com/index.php?mib=rss&id=5',
+  nasional7: 'https://www.merdeka.com/rss/nasional',
+  internasional: 'https://www.antaranews.com/rss/internasional.xml',
+  internasional2: 'https://www.bbc.com/indonesia/index.xml',
+  internasional3: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+  internasional4: 'https://www.aljazeera.com/xml/rss/all.xml',
+  internasional5: 'https://feeds.bbci.co.uk/news/world/rss.xml',
+  ekonomi: 'https://www.antaranews.com/rss/ekonomi.xml',
+  ekonomi2: 'https://ekonomi.kompas.com/rss',
+  ekonomi3: 'https://www.cnbcindonesia.com/rss',
+  ekonomi4: 'https://finance.detik.com/rss',
+  ekonomi5: 'https://bisnis.tempo.co/rss/nasional',
+  papua: 'https://kabarpapua.co/feed/',
+  papua2: 'https://www.papuapos.com/feed/',
+  papua3: 'https://www.papuatoday.com/feed/',
+  papua4: 'https://www.tabloidjubi.com/feed/',
+  papua5: 'https://seputarpapua.com/feed/',
+  maluku: 'https://beritamalukuonline.com/feed/',
+  maluku2: 'https://www.satumaluku.id/feed/',
+  maluku3: 'https://ambonexpress.com/feed/',
+  maluku4: 'https://kabarindonesianews.com/feed/',
+  maluku5: 'https://www.rri.co.id/rss/regional/maluku',
+  regional: 'https://www.rri.co.id/rss/regional',
+  regional2: 'https://www.malukunews.co/rss.xml',
+  regional3: 'https://regional.kompas.com/rss',
+  regional4: 'https://www.liputan6.com/rss/regional',
+  regional5: 'https://daerah.sindonews.com/rss',
+  cyber: 'https://www.antaranews.com/rss/tekno.xml',
+  cyber2: 'https://tekno.kompas.com/rss',
+  cyber3: 'https://www.cnnindonesia.com/teknologi/rss',
+  cyber4: 'https://www.liputan6.com/rss/tekno',
+  cyber5: 'https://tekno.tempo.co/rss/it',
+  hotzone: 'https://www.antaranews.com/rss/hukum.xml',
+  hotzone2: 'https://www.cnnindonesia.com/nasional/rss',
+  hotzone3: 'https://news.detik.com/rss',
+  hotzone4: 'https://www.tribunnews.com/rss/nasional',
+  hotzone5: 'https://www.jpnn.com/index.php?mib=rss&id=2'
+};
+
+    function fetchRSS(category) {
+      const container = document.getElementById("berita-container");
+      container.innerHTML = "Memuat berita...";
+
+      if (category === 'all') {
+        Promise.all(Object.values(feeds).map(url => loadFeed(url))).then(all => {
+          const flat = all.flat();
+          renderNews(flat);
+        });
+      } else {
+        const url = feeds[category];
+        loadFeed(url).then(renderNews);
+      }
     }
-    setInterval(updateClock, 1000);
-    updateClock();
 
-    // Simulasi visitor count (localStorage)
-    if (!localStorage.getItem("hanoman_visitor")) {
-      localStorage.setItem("hanoman_visitor", "true");
-      let current = localStorage.getItem("hanoman_visitorCount") || 0;
-      localStorage.setItem("hanoman_visitorCount", parseInt(current) + 1);
+    function loadFeed(url) {
+      return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
+        .then(res => res.json())
+        .then(data => data.items.map(item => ({
+  title: item.title,
+  thumbnail: item.thumbnail || item.enclosure?.link || '',
+          date: item.pubDate.split(' ')[0],
+          category: '',
+  fullDate: item.pubDate
+        })))
+        .catch(err => [{ title: "Gagal memuat RSS: " + url, date: '', category: '' }]);
     }
-    document.getElementById("visitorCount").innerText = localStorage.getItem("hanoman_visitorCount") || 1;
 
-    // Filter berita berdasarkan tanggal
-    function filterByDate() {
-      const selectedDate = document.getElementById("datePicker").value;
-      const articles = document.querySelectorAll(".news-item");
-
-      articles.forEach(article => {
-        const articleDate = article.getAttribute("data-date");
-        if (!selectedDate || articleDate === selectedDate) {
-          article.style.display = "block";
-        } else {
-          article.style.display = "none";
-        }
+    function renderNews(newsArray) {
+      const container = document.getElementById("berita-container");
+      container.innerHTML = "";
+      newsArray.forEach(news => {
+        const item = document.createElement("div");
+        item.className = "news-item";
+        item.innerHTML = `
+  <div class='category'>${news.category}</div>
+  ${news.thumbnail ? `<img src='${news.thumbnail}' alt='thumbnail' style='width:100%;max-height:200px;object-fit:cover;border-radius:5px;margin:10px 0;'/>` : ''}
+  <div><strong>${news.title}</strong></div>
+  <div class='date'>${news.fullDate}</div>
+`;
+        container.appendChild(item);
       });
     }
 
-    // Simulasi berita dummy (karena RSS fetch butuh backend/proxy)
-    const dummyNews = [
-      { title: "Operasi Intelijen Ditingkatkan di Perbatasan", date: "2025-06-25" },
-      { title: "Papua Siaga: TNI-Polri Gelar Patroli Gabungan", date: "2025-06-26" },
-      { title: "Maluku Utara Dilaporkan Tenang Meski Isu Hoax Merebak", date: "2025-06-26" },
-    ];
-
-    const container = document.getElementById("newsContainer");
-    dummyNews.forEach(news => {
-      const div = document.createElement("div");
-      div.className = "news-item";
-      div.setAttribute("data-date", news.date);
-      div.innerHTML = `<h3>${news.title}</h3><p>Tanggal: ${news.date}</p>`;
-      container.appendChild(div);
-    });
+    // Load default (semua)
+    fetchRSS('all');
   </script>
 </body>
 </html>
