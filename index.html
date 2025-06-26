@@ -6,57 +6,119 @@
   <title>HANOMAN NEWS</title>
   <style>
     body {
-      background-color: #111;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/2/2d/Hanuman_by_Basohli_painters.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: #eee;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
     }
-    #login-screen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      color: #0f0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
+    header {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 3px solid #0f0;
     }
-    #login-screen input {
-      margin: 0.5rem;
+    header h1 {
+      margin: 0;
+      color: #0f0;
+      font-size: 2rem;
+      letter-spacing: 2px;
+    }
+    #datetime {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    nav {
+      background-color: rgba(0, 0, 0, 0.85);
       padding: 0.5rem;
-      font-size: 1rem;
-      background: #111;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid #333;
+    }
+    nav button {
+      background-color: #111;
       border: 1px solid #0f0;
       color: #0f0;
-      border-radius: 4px;
-    }
-    #login-screen button {
       padding: 0.5rem 1rem;
-      font-size: 1rem;
-      background: #0f0;
-      color: #000;
-      border: none;
-      cursor: pointer;
       border-radius: 4px;
+      cursor: pointer;
       font-weight: bold;
     }
-    header, nav, main, footer, #search-bar {
-      display: none;
+    nav button.active {
+      background-color: #0f0;
+      color: #000;
+    }
+    #search-bar {
+      margin: 1rem auto;
+      text-align: center;
+    }
+    #search-input {
+      width: 80%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #0f0;
+      background-color: #000;
+      color: #0f0;
+    }
+    main {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      background-color: rgba(0,0,0,0.7);
+    }
+    .card {
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      padding: 1rem;
+      border-radius: 8px;
+      display: block;
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      color: #0f0;
+    }
+    .card p {
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    .card img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    footer {
+      background-color: rgba(0, 0, 0, 0.8);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #aaa;
+      border-top: 1px solid #333;
+    }
+    #loading {
+      text-align: center;
+      font-style: italic;
+      color: #888;
+      margin-top: 2rem;
+    }
+    #visitor-counter {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <div id="login-screen">
-    <h2>Masukkan Password</h2>
-    <input type="password" id="password" placeholder="Password...">
-    <button onclick="checkPassword()">Masuk</button>
-    <p id="login-msg"></p>
-  </div>
-
   <header>
     <h1>HANOMAN NEWS</h1>
+    <div id="datetime"></div>
+    <div id="visitor-counter"></div>
   </header>
   <nav>
     <button onclick="filterNews('all', this)" class="active">Semua</button>
@@ -75,28 +137,23 @@
   </footer>
 
   <script>
-    const PASSWORD = "hanoman123";
-    function checkPassword() {
-      const input = document.getElementById('password').value;
-      const msg = document.getElementById('login-msg');
-      if (input === PASSWORD) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.querySelector('header').style.display = 'block';
-        document.querySelector('nav').style.display = 'flex';
-        document.querySelector('main').style.display = 'grid';
-        document.querySelector('footer').style.display = 'block';
-        document.querySelector('#search-bar').style.display = 'block';
-        loadNews();
-      } else {
-        msg.textContent = "Password salah!";
-        msg.style.color = "red";
-      }
+    function updateDateTime() {
+      const now = new Date();
+      const dateTime = now.toLocaleString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit', second:'2-digit' });
+      document.getElementById('datetime').textContent = `Waktu saat ini: ${dateTime}`;
     }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    let visitCount = localStorage.getItem('visitCount') || 0;
+    visitCount++;
+    localStorage.setItem('visitCount', visitCount);
+    document.getElementById('visitor-counter').textContent = `Jumlah kunjungan di perangkat ini: ${visitCount}`;
 
     const sources = [
-      { url: "https://rss.cnn.com/rss/edition.rss", tag: "nasional" },
-      { url: "https://www.antaranews.com/rss/nasional.xml", tag: "nasional" },
-      { url: "https://www.kompas.com/feeds/nasional", tag: "nasional" },
+      { url: "https://rss2json.com/feed/https://nasional.kompas.com/rss", tag: "nasional" },
+      { url: "https://rss2json.com/feed/https://www.cnnindonesia.com/nasional/rss", tag: "nasional" },
+      { url: "https://rss2json.com/feed/https://antaranews.com/rss/nasional.xml", tag: "nasional" },
       { url: "http://feeds.bbci.co.uk/news/world/rss.xml", tag: "internasional" },
       { url: "https://www.aljazeera.com/xml/rss/all.xml", tag: "internasional" },
       { url: "https://www.theguardian.com/world/rss", tag: "internasional" },
@@ -171,6 +228,8 @@
         card.style.display = showByTag && showBySearch ? 'block' : 'none';
       });
     });
+
+    loadNews();
   </script>
 </body>
 </html>
