@@ -29,13 +29,35 @@
       padding: 0.5rem;
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 1rem;
       border-bottom: 1px solid #333;
     }
-    nav a {
+    nav button {
+      background-color: #111;
+      border: 1px solid #0f0;
       color: #0f0;
-      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
       font-weight: bold;
+    }
+    nav button.active {
+      background-color: #0f0;
+      color: #000;
+    }
+    #search-bar {
+      margin: 1rem auto;
+      text-align: center;
+    }
+    #search-input {
+      width: 80%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #0f0;
+      background-color: #000;
+      color: #0f0;
     }
     main {
       padding: 2rem;
@@ -48,6 +70,10 @@
       border: 1px solid #333;
       padding: 1rem;
       border-radius: 8px;
+      display: block;
+    }
+    .card.hidden {
+      display: none;
     }
     .card h2 {
       font-size: 1.2rem;
@@ -85,14 +111,15 @@
     <h1>HANOMAN NEWS</h1>
   </header>
   <nav>
-    <a href="#">Nasional</a>
-    <a href="#">Internasional</a>
-    <a href="#">Intelijen</a>
-    <a href="#">Cyber</a>
-    <a href="#">Hot Zone</a>
-    <a href="#">Papua</a>
-    <a href="#">Maluku</a>
+    <button onclick="filterNews('all', this)" class="active">Semua</button>
+    <button onclick="filterNews('nasional', this)">Nasional</button>
+    <button onclick="filterNews('internasional', this)">Internasional</button>
+    <button onclick="filterNews('papua', this)">Papua</button>
+    <button onclick="filterNews('maluku', this)">Maluku</button>
   </nav>
+  <div id="search-bar">
+    <input type="text" id="search-input" placeholder="Cari judul berita...">
+  </div>
   <div id="loading">Memuat berita...</div>
   <main id="news-container">
     <!-- Artikel berita akan muncul di sini -->
@@ -102,26 +129,26 @@
   </footer>
   <script>
     const sources = [
-      "https://rss.cnn.com/rss/edition.rss",
-      "https://www.antaranews.com/rss/nasional.xml",
-      "https://www.kompas.com/feeds/nasional",
-      "http://feeds.bbci.co.uk/news/world/rss.xml",
-      "https://www.aljazeera.com/xml/rss/all.xml",
-      "https://www.theguardian.com/world/rss",
-      "https://rri.co.id/rss/papua.xml",
-      "https://rri.co.id/rss/maluku.xml",
-      "https://jubi.id/feed/",
-      "https://malukuterkini.com/feed/",
-      "https://ambonekspres.fajar.co.id/feed/",
-      "https://papuainside.com/feed/"
+      { url: "https://rss.cnn.com/rss/edition.rss", tag: "nasional" },
+      { url: "https://www.antaranews.com/rss/nasional.xml", tag: "nasional" },
+      { url: "https://www.kompas.com/feeds/nasional", tag: "nasional" },
+      { url: "http://feeds.bbci.co.uk/news/world/rss.xml", tag: "internasional" },
+      { url: "https://www.aljazeera.com/xml/rss/all.xml", tag: "internasional" },
+      { url: "https://www.theguardian.com/world/rss", tag: "internasional" },
+      { url: "https://rri.co.id/rss/papua.xml", tag: "papua" },
+      { url: "https://jubi.id/feed/", tag: "papua" },
+      { url: "https://papuainside.com/feed/", tag: "papua" },
+      { url: "https://rri.co.id/rss/maluku.xml", tag: "maluku" },
+      { url: "https://malukuterkini.com/feed/", tag: "maluku" },
+      { url: "https://ambonekspres.fajar.co.id/feed/", tag: "maluku" }
     ];
 
     async function fetchRSS(url) {
-      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&lang=id`;
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
       try {
         const res = await fetch(apiUrl);
         const data = await res.json();
-        return data.items.slice(0, 6); // Ambil hingga 6 berita per sumber
+        return data.items.slice(0, 6);
       } catch (e) {
         console.error("Gagal fetch:", url);
         return [];
@@ -133,14 +160,14 @@
       const loading = document.getElementById("loading");
       loading.textContent = "Mengambil data dari berbagai sumber...";
 
-      for (let url of sources) {
-        const articles = await fetchRSS(url);
+      for (let source of sources) {
+        const articles = await fetchRSS(source.url);
         articles.forEach(item => {
           const card = document.createElement("div");
           card.className = "card";
-          const image = item.thumbnail || item.enclosure?.link || "https://via.placeholder.com/300x150?text=No+Image";
+          card.setAttribute("data-tag", source.tag);
           card.innerHTML = `
-            <img src="${image}" alt="Gambar Berita">
+            <img src="${item.thumbnail || item.enclosure?.link || 'https://via.placeholder.com/300x150?text=No+Image'}" alt="Gambar Berita">
             <h2>${item.title}</h2>
             <p>${item.description.slice(0, 150)}...</p>
             <a href="${item.link}" target="_blank" style="color:#0f0;">[Selengkapnya]</a>
@@ -150,6 +177,25 @@
       }
       loading.remove();
     }
+
+    function filterNews(tag, button) {
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        const ctag = card.getAttribute('data-tag');
+        card.classList.toggle('hidden', tag !== 'all' && ctag !== tag);
+      });
+    }
+
+    document.getElementById('search-input').addEventListener('input', function () {
+      const query = this.value.toLowerCase();
+      document.querySelectorAll('.card').forEach(card => {
+        const title = card.querySelector('h2').textContent.toLowerCase();
+        card.style.display = title.includes(query) ? 'block' : 'none';
+      });
+    });
 
     loadNews();
   </script>
