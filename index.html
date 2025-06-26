@@ -1,428 +1,282 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HANOMAN NEWS</title>
-  <style>
-    /* Reset dan styling umum */
-    body, html {
-      margin: 0; padding: 0; height: 100%;
-      font-family: 'Courier New', Courier, monospace;
-      background-color: #000;
-      background-image:
-        radial-gradient(circle at center, rgba(0,255,0,0.05), transparent 70%),
-        repeating-radial-gradient(circle at center, rgba(255,0,0,0.02) 0 2px, transparent 3px 6px);
-      color: #00ff00;
-      user-select: none;
-    }
-    /* Splash screen full */
-    #splash {
-      position: fixed;
-      top:0; left:0; width:100%; height:100%;
-      background-color: #000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      border: 3px solid #00ff00;
-      box-shadow: 0 0 40px #00ff00;
-      z-index: 9999;
-    }
-    #splash h2 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      text-shadow:
-        0 0 8px #00ff00,
-        0 0 12px #00ff00;
-      user-select: none;
-    }
-    #splash input[type=text] {
-      font-size: 1.5em;
-      padding: 10px 15px;
-      border-radius: 8px;
-      border: 2px solid #00ff00;
-      background: #111;
-      color: #0f0;
-      width: 300px;
-      max-width: 90vw;
-      text-align: center;
-      user-select: text;
-    }
-    #splash button {
-      margin-top: 20px;
-      font-size: 1.3em;
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: 2px solid #00ff00;
-      background: #000;
-      color: #0f0;
-      cursor: pointer;
-      font-weight: 700;
-      text-transform: uppercase;
-      transition: all 0.3s ease;
-    }
-    #splash button:hover {
-      background: #ff0000;
-      border-color: #ff0000;
-      color: #111;
-      box-shadow:
-        0 0 20px #ff0000cc,
-        0 0 30px #ff0000cc;
-      transform: scale(1.05);
-    }
-
-    /* Main content hidden before login */
-    #main-content {
-      display: none;
-      padding: 20px;
-    }
-
-    /* Header, nav, footer, etc, dari versi sebelumnya */
-    header {
-      text-align: center;
-      padding: 20px 10px;
-      background: rgba(0, 0, 0, 0.85);
-      margin-bottom: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #00ff00aa;
-      border: 2px solid #00ff00;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    h1 {
-      margin: 0;
-      font-size: 3em;
-      color: #00ff00;
-      text-shadow:
-        0 0 5px #00ff00,
-        0 0 10px #00ff00,
-        0 0 20px #00ff00,
-        0 0 30px #0f0;
-    }
-    header p {
-      font-style: italic;
-      font-size: 1.1em;
-      color: #a0ffa0;
-      margin-top: 5px;
-    }
-    nav {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    nav button {
-      background-color: #111;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 12px 20px;
-      margin: 5px 8px;
-      cursor: pointer;
-      border-radius: 8px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 8px #00ff00aa;
-    }
-    nav button:hover {
-      background-color: #ff0000;
-      color: #111;
-      border-color: #ff0000;
-      box-shadow:
-        0 0 12px #ff0000cc,
-        0 0 20px #ff0000cc;
-      transform: scale(1.05);
-    }
-    /* Filter tanggal cascading */
-    #filter-date-advanced {
-      text-align: center;
-      margin-bottom: 30px;
-      user-select: none;
-      color: #00ff00;
-      font-weight: 700;
-    }
-    #filter-date-advanced label {
-      margin: 0 10px;
-    }
-    #filter-date-advanced select {
-      background: #111;
-      color: #0f0;
-      border: 2px solid #00ff00;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-      user-select: text;
-      min-width: 120px;
-      text-align: center;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-    }
-    #filter-date-advanced button {
-      background: #111;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 8px 16px;
-      border-radius: 6px;
-      margin-left: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    #filter-date-advanced button:hover {
-      background: #ff0000;
-      border-color: #ff0000;
-      color: #111;
-      transform: scale(1.05);
-    }
-
-    #berita-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 15px;
-      min-height: 200px;
-    }
-    .news-item {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 12px 14px;
-      border-radius: 10px;
-      box-shadow:
-        0 0 12px 1.5px #00ff00aa,
-        inset 0 0 8px 1px #00ff0044;
-      transition: box-shadow 0.3s ease, background-color 0.25s ease;
-      user-select: none;
-      font-size: 0.9em;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .news-item:hover {
-      background-color: rgba(0, 255, 0, 0.15);
-      box-shadow:
-        0 0 22px 3px #00ff00dd,
-        inset 0 0 15px 2px #00ff0066;
-    }
-    .news-item img {
-      width: 100%;
-      max-height: 110px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      box-shadow: 0 0 8px #00ff00bb;
-      user-select: none;
-    }
-    .category {
-      display: inline-block;
-      font-weight: 900;
-      color: #ff0000;
-      border: 2px solid #ff0000;
-      padding: 2px 8px;
-      border-radius: 5px;
-      font-family: 'Courier New', monospace;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 6px #ff0000cc;
-      margin-bottom: 8px;
-      font-size: 0.75em;
-    }
-    .date {
-      font-size: 0.75em;
-      color: #aaa;
-      font-style: italic;
-      margin-top: 10px;
-      user-select: text;
-      text-align: right;
-    }
-    @media (max-width: 900px) {
-      #berita-container {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      }
-    }
-    @media (max-width: 480px) {
-      #berita-container {
-        grid-template-columns: 1fr;
-      }
-    }
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 0.8em;
-      color: #555;
-      font-family: 'Courier New', monospace;
-      letter-spacing: 1px;
-      user-select: none;
-      text-transform: uppercase;
-      text-shadow: 0 0 3px #000;
-    }
-    /* Visitor Section */
-    #visitor-section {
-      margin-top: 40px;
-      text-align: center;
-      color: #0f0;
-      font-family: monospace;
-      user-select: none;
-    }
-    #visitor-section h3 {
-      margin-bottom: 8px;
-    }
-    #visitor-name {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 2px solid #00ff00;
-      color: #0f0;
-      background: #111;
-      margin-left: 10px;
-      font-weight: 700;
-    }
-    #visitor-section button {
-      padding: 7px 14px;
-      margin-left: 10px;
-      background: #111;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: all 0.3s ease;
-    }
-    #visitor-section button:hover {
-      background: #ff0000;
-      border-color: #ff0000;
-      color: #111;
-      transform: scale(1.05);
-    }
-    #visitor-list {
-      margin-top: 20px;
-      max-height: 150px;
-      overflow-y: auto;
-      border: 1px solid #00ff00;
-      border-radius: 8px;
-      padding: 10px;
-      background: rgba(0,0,0,0.7);
-      text-align: left;
-    }
-    #visitor-list div {
-      margin: 4px 0;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HANOMAN NEWS</title>
+<style>
+  body, html {
+    margin:0; padding:0; height:100%;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #000;
+    color: #e0e0e0;
+    overflow-y: auto;
+  }
+  #splash {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: #000c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #0f0;
+    z-index: 9999;
+    font-size: 1.2rem;
+  }
+  #splash input[type=text] {
+    padding: 10px;
+    font-size: 1.2rem;
+    width: 300px;
+    max-width: 90vw;
+    margin: 10px 0;
+    background: #111;
+    color: #0f0;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+  }
+  #splash button {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background: #0f0;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  header {
+    text-align: center;
+    padding: 10px;
+    background: rgba(0,0,0,0.7);
+    border-radius: 10px;
+    margin: 10px 20px 20px;
+    color: #0f0;
+  }
+  header h1 {
+    margin:0; font-size: 2.5rem;
+  }
+  nav {
+    text-align: center;
+    margin: 10px 0 20px;
+  }
+  nav button {
+    background-color: #111;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 8px 14px;
+    margin: 3px 6px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  nav button:hover {
+    background-color: #0f0;
+    color: #000;
+  }
+  #filters {
+    max-width: 900px;
+    margin: 0 auto 30px;
+    text-align: center;
+  }
+  #filters select, #filters button {
+    background: #111;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 6px 10px;
+    margin: 0 6px 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  #filters button:hover {
+    background-color: #0f0;
+    color: #000;
+  }
+  #berita-container {
+    max-width: 1100px;
+    margin: 0 auto 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+    gap: 18px;
+    padding: 0 10px;
+  }
+  .news-item {
+    background: rgba(0,0,0,0.7);
+    border: 2px solid #0f0;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+  }
+  .news-item:hover {
+    background-color: #0a0;
+  }
+  .news-item img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .news-item .category {
+    color: #ffcc00;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .news-item strong a {
+    color: #0f0;
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  .news-item strong a:hover {
+    text-decoration: underline;
+  }
+  .news-item .date {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-top: auto;
+    text-align: right;
+  }
+  .footer {
+    text-align: center;
+    margin: 20px 10px 30px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  #visitor-section {
+    max-width: 500px;
+    margin: 0 auto 40px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #0f0;
+    border-radius: 8px;
+    padding: 15px;
+    color: #0f0;
+    font-size: 1rem;
+  }
+  #visitor-section input[type=text] {
+    width: 70%;
+    padding: 6px 8px;
+    background: #111;
+    border: 1px solid #0f0;
+    border-radius: 4px;
+    color: #0f0;
+    font-size: 1rem;
+  }
+  #visitor-section button {
+    padding: 6px 14px;
+    margin-left: 6px;
+    background: #0f0;
+    border: none;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  #visitor-list {
+    margin-top: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+    border-top: 1px solid #0f0;
+    padding-top: 8px;
+  }
+</style>
 </head>
 <body>
 
-  <!-- Splash screen login -->
-  <div id="splash">
-    <h2>Masukkan Nama Kamu Dulu, Bro!</h2>
-    <input type="text" id="splash-name" placeholder="Nama kamu..." autocomplete="off" />
-    <button onclick="submitSplashName()">MASUK</button>
+<div id="splash">
+  <div>Masukkan nama kamu dulu, bro!</div>
+  <input type="text" id="visitor-name-splash" placeholder="Nama kamu..." />
+  <button onclick="submitName()">Masuk</button>
+</div>
+
+<header>
+  <h1>HANOMAN NEWS</h1>
+  <p>Portal Intelijen Nasional</p>
+</header>
+
+<nav>
+  <button onclick="fetchRSS('all')">Semua</button>
+  <button onclick="fetchRSS('nasional')">Nasional</button>
+  <button onclick="fetchRSS('papua')">Papua</button>
+  <button onclick="fetchRSS('maluku')">Maluku</button>
+  <button onclick="fetchRSS('regional')">Regional</button>
+  <button onclick="fetchRSS('internasional')">Internasional</button>
+  <button onclick="fetchRSS('cyber')">Cyber</button>
+  <button onclick="fetchRSS('hotzone')">Hot Zone</button>
+  <button onclick="fetchRSS('ekonomi')">Ekonomi</button>
+</nav>
+
+<div id="filters" style="display:none;">
+  <select id="filterYear" onchange="updateMonthOptions()"></select>
+  <select id="filterMonth" onchange="updateDayOptions()" disabled></select>
+  <select id="filterDay" disabled></select>
+  <button onclick="applyAdvancedDateFilter()">Filter Tanggal</button>
+  <button onclick="resetAdvancedDateFilter()">Reset Filter</button>
+</div>
+
+<div id="berita-container">Memuat berita terkini...</div>
+
+<div id="visitor-section" style="display:none;">
+  <div>Jumlah pengunjung yang sudah mengisi nama: <span id="visitor-count">0</span></div>
+  <div>
+    <input type="text" id="visitor-name" placeholder="Masukkan nama pengunjung..." />
+    <button onclick="addVisitor()">Tambah Nama</button>
   </div>
+  <div id="visitor-list"><i>Belum ada pengunjung yang mengisi nama.</i></div>
+</div>
 
-  <!-- Main content hidden until login -->
-  <div id="main-content" style="display:none;">
-    <header>
-      <h1>HANOMAN NEWS</h1>
-      <p>Portal Intelijen Nasional</p>
-    </header>
-
-    <nav>
-      <button onclick="fetchRSS('all')">Semua</button>
-      <button onclick="fetchRSS('nasional')">Nasional</button>
-      <button onclick="fetchRSS('papua')">Papua</button>
-      <button onclick="fetchRSS('maluku')">Maluku</button>
-      <button onclick="fetchRSS('regional')">Regional</button>
-      <button onclick="fetchRSS('internasional')">Internasional</button>
-      <button onclick="fetchRSS('cyber')">Cyber</button>
-      <button onclick="fetchRSS('hotzone')">Hot Zone</button>
-      <button onclick="fetchRSS('ekonomi')">Ekonomi</button>
-    </nav>
-
-    <div id="filter-date-advanced">
-      <label for="filterYear">Tahun:
-        <select id="filterYear" onchange="updateMonthOptions()">
-          <option value="">--Pilih Tahun--</option>
-        </select>
-      </label>
-      &nbsp;&nbsp;
-      <label for="filterMonth">Bulan:
-        <select id="filterMonth" onchange="updateDayOptions()" disabled>
-          <option value="">--Pilih Bulan--</option>
-        </select>
-      </label>
-      &nbsp;&nbsp;
-      <label for="filterDay">Tanggal:
-        <select id="filterDay" disabled>
-          <option value="">--Pilih Tanggal--</option>
-        </select>
-      </label>
-      &nbsp;&nbsp;
-      <button onclick="applyAdvancedDateFilter()">Filter</button>
-      <button onclick="resetAdvancedDateFilter()">Reset</button>
-    </div>
-
-    <div id="berita-container">Memuat berita terkini...</div>
-
-    <!-- Visitor Section -->
-    <div id="visitor-section">
-      <h3>Pengunjung Website</h3>
-      <p>Total pengunjung: <span id="visitor-count">0</span></p>
-      <label for="visitor-name" style="font-weight:700;">Masukkan nama kamu:</label>
-      <input type="text" id="visitor-name" placeholder="Nama kamu..."/>
-      <button onclick="addVisitor()">Kirim</button>
-      <div id="visitor-list"><i>Belum ada pengunjung yang mengisi nama.</i></div>
-    </div>
-
-    <div class="footer">
-      &copy; 2025 HANOMAN NEWS - Dibangun untuk ketahanan informasi nasional.
-    </div>
-  </div>
+<div class="footer">
+  &copy; 2025 HANOMAN NEWS - Dibangun untuk ketahanan informasi nasional.
+</div>
 
 <script>
-  // Cek jika user sudah pernah masuk (nama tersimpan di localStorage)
-  const localStorageKey = 'hanoman_username';
+  // Escape HTML untuk keamanan input user
+  function escapeHTML(text) {
+    return text.replace(/[&<>"']/g, m => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[m]));
+  }
+
+  // Visitor name splash screen logic
   const splashDiv = document.getElementById('splash');
-  const mainContent = document.getElementById('main-content');
-
-  // Visitor list
+  const visitorNameSplash = document.getElementById('visitor-name-splash');
   let visitors = JSON.parse(localStorage.getItem('hanoman_visitors') || '[]');
+  let currentVisitorName = localStorage.getItem('hanoman_currentVisitor') || '';
 
-  // Jika sudah ada nama tersimpan, langsung masuk ke main content
-  window.onload = () => {
-    const savedName = localStorage.getItem(localStorageKey);
-    if(savedName && savedName.trim().length >= 2) {
-      splashDiv.style.display = 'none';
-      mainContent.style.display = 'block';
-      initApp();
-    } else {
-      splashDiv.style.display = 'flex';
-      mainContent.style.display = 'none';
-      document.getElementById('splash-name').focus();
-    }
-    updateVisitorCount();
-  };
-
-  function submitSplashName() {
-    const input = document.getElementById('splash-name');
-    const name = input.value.trim();
-    if(name.length < 2) {
-      alert('Nama minimal 2 karakter, bro!');
-      input.focus();
+  function submitName() {
+    let name = visitorNameSplash.value.trim();
+    if(name.length < 2){
+      alert('Nama harus minimal 2 karakter, bro!');
+      visitorNameSplash.focus();
       return;
     }
-    // Simpan nama ke localStorage
-    localStorage.setItem(localStorageKey, name);
+    currentVisitorName = name;
+    localStorage.setItem('hanoman_currentVisitor', currentVisitorName);
+
+    if(!visitors.includes(currentVisitorName)) {
+      visitors.push(currentVisitorName);
+      localStorage.setItem('hanoman_visitors', JSON.stringify(visitors));
+    }
 
     splashDiv.style.display = 'none';
-    mainContent.style.display = 'block';
-
-    initApp();
+    showMainContent();
   }
 
-  // Inisialisasi aplikasi setelah login splash
-  function initApp() {
-    fetchRSS('all');
+  function showMainContent() {
+    document.getElementById('filters').style.display = 'block';
+    document.getElementById('visitor-section').style.display = 'block';
     updateVisitorCount();
+    fetchRSS('all');
   }
 
-  // =================== RSS & News Handling ======================
+  if(currentVisitorName && currentVisitorName.length >= 2){
+    splashDiv.style.display = 'none';
+    showMainContent();
+  }
+
+  // RSS Feeds URLs (20 per category)
   const feeds = {
     nasional: [
       'https://www.antaranews.com/rss/nasional.xml',
@@ -432,41 +286,19 @@
       'https://www.liputan6.com/rss/nasional',
       'https://www.jpnn.com/index.php?mib=rss&id=5',
       'https://www.merdeka.com/rss/nasional',
+      'https://news.detik.com/rss/nasional',
       'https://www.cnnindonesia.com/nasional/rss',
-      'https://www.detik.com/rss/indeks/nasional',
       'https://www.tribunnews.com/rss/nasional',
-      'https://www.okezone.com/rss/nasional',
-      'https://www.tempo.co/rss/nasional',
-      'https://www.beritasatu.com/rss/nasional',
-      'https://www.viva.co.id/rss/indeks/nasional',
-      'https://news.metrotvnews.com/rss/nasional',
-      'https://www.liputan6.com/rss/nasional',
-      'https://www.kumparan.com/rss/nasional',
-      'https://www.radaronline.id/rss/nasional',
-      'https://www.indozone.id/rss/nasional',
-      'https://www.bisnis.com/rss/nasional'
-    ],
-    internasional: [
-      'https://www.antaranews.com/rss/internasional.xml',
-      'https://www.bbc.com/indonesia/index.xml',
-      'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
-      'https://www.aljazeera.com/xml/rss/all.xml',
-      'https://feeds.bbci.co.uk/news/world/rss.xml',
-      'https://www.cnn.com/services/rss/',
-      'https://www.reuters.com/tools/rss',
-      'https://www.npr.org/rss/rss.php?id=1004',
-      'https://www.washingtonpost.com/rss/world',
-      'https://www.theguardian.com/world/rss',
-      'https://www.euronews.com/rss?format=xml',
-      'https://www.france24.com/en/rss',
-      'https://www.dw.com/en/top-stories/s-9097/sitemap.xml',
-      'https://www.rt.com/rss/news/',
-      'https://www.nbcnews.com/id/3032091/device/rss/rss.xml',
-      'https://www.usatoday.com/rss/news',
-      'https://www.cbsnews.com/latest/rss/main',
-      'https://www.aljazeera.com/xml/rss/all.xml',
-      'https://www.bloomberg.com/feed/podcast/rss',
-      'https://www.reuters.com/rssFeed/worldNews'
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml'
     ],
     papua: [
       'https://kabarpapua.co/feed/',
@@ -534,6 +366,28 @@
       'https://www.indozone.id/rss/daerah',
       'https://www.liputan6.com/rss/daerah'
     ],
+    internasional: [
+      'https://www.dw.com/en/top-stories/s-9097/sitemap.xml',
+      'https://www.rt.com/rss/news/',
+      'https://www.nbcnews.com/id/3032091/device/rss/rss.xml',
+      'https://www.usatoday.com/rss/news',
+      'https://www.cbsnews.com/latest/rss/main',
+      'https://www.aljazeera.com/xml/rss/all.xml',
+      'https://www.bloomberg.com/feed/podcast/rss',
+      'https://www.reuters.com/rssFeed/worldNews',
+      'https://www.bbc.com/indonesia/index.xml',
+      'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+      'https://www.abc.net.au/news/feed/51120/rss.xml',
+      'https://www.cnn.com/rss/edition_world.rss',
+      'https://feeds.npr.org/1004/rss.xml',
+      'https://www.france24.com/en/rss',
+      'https://www.theguardian.com/world/rss',
+      'https://www.npr.org/rss/rss.php?id=1004',
+      'https://www.voanews.com/rss',
+      'https://www.euronews.com/rss',
+      'https://www.dw.com/en/rss-feed/s-8030',
+      'https://www.aljazeera.com/xml/rss/all.xml'
+    ],
     cyber: [
       'https://www.antaranews.com/rss/tekno.xml',
       'https://tekno.kompas.com/rss',
@@ -575,255 +429,237 @@
       'https://www.antarafoto.com/rss/hukum',
       'https://www.beritasatu.com/rss/hukum',
       'https://www.radaronline.id/rss/hukum',
-      'https://www.kumparan.com/rss/hukum',
-      'https://www.indozone.id/rss/hukum'
+      'https://www.viva.co.id/rss/hukum',
+      'https://www.kumparan.com/rss/hukum'
+    ],
+    ekonomi: [
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://ekonomi.kompas.com/rss',
+      'https://www.cnbcindonesia.com/rss',
+      'https://finance.detik.com/rss',
+      'https://bisnis.tempo.co/rss/nasional',
+      'https://www.liputan6.com/rss/ekonomi',
+      'https://www.jpnn.com/index.php?mib=rss&id=10',
+      'https://www.sindonews.com/feed/ekonomi',
+      'https://www.tribunnews.com/rss/ekonomi',
+      'https://www.cnnindonesia.com/ekonomi/rss',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml',
+      'https://www.antaranews.com/rss/ekonomi.xml'
     ]
   };
 
-  let allLoadedNews = [];
+  let currentCategory = 'all';
+  let allNews = [];
+  let filteredNews = [];
+  let filteredByDate = null;
 
-  function fetchRSS(category) {
-    const container = document.getElementById("berita-container");
-    container.innerHTML = "Memuat berita...";
+  // Ambil dan gabung semua feeds kategori
+  function fetchRSS(category){
+    currentCategory = category;
+    filteredByDate = null;
+    document.getElementById('berita-container').innerHTML = 'Memuat berita...';
+    document.getElementById('filterYear').innerHTML = '';
+    document.getElementById('filterMonth').innerHTML = '';
+    document.getElementById('filterDay').innerHTML = '';
+    document.getElementById('filterMonth').disabled = true;
+    document.getElementById('filterDay').disabled = true;
 
-    allLoadedNews = [];
-    resetAdvancedDateFilter(false);
-
-    if (category === 'all') {
-      let allFeeds = [];
-      Object.values(feeds).forEach(arr => allFeeds = allFeeds.concat(arr));
-      allFeeds = allFeeds.slice(0, 100); // batasi max 100 feed untuk performa
-
-      Promise.all(allFeeds.map(url => loadFeed(url))).then(results => {
-        const combined = results.flat();
-        combined.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
-        renderNews(combined);
+    if(category === 'all'){
+      // Gabungkan semua kategori feed ke satu array URL
+      let urls = [];
+      for(let key in feeds) {
+        urls = urls.concat(feeds[key]);
+      }
+      loadAllFeeds(urls).then(news => {
+        allNews = news.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
+        filteredNews = [...allNews];
+        renderNews(filteredNews);
+        setupDateFilters(allNews);
       });
     } else {
-      const urls = feeds[category];
-      Promise.all(urls.map(url => loadFeed(url))).then(results => {
-        const combined = results.flat();
-        combined.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
-        renderNews(combined);
+      loadAllFeeds(feeds[category]).then(news => {
+        allNews = news.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
+        filteredNews = [...allNews];
+        renderNews(filteredNews);
+        setupDateFilters(allNews);
       });
     }
   }
 
-  function loadFeed(url) {
+  // Load semua URL RSS satu per satu dan gabungkan hasilnya
+  function loadAllFeeds(urls){
+    const promises = urls.map(url => loadFeed(url));
+    return Promise.all(promises).then(results => {
+      return results.flat();
+    });
+  }
+
+  // Load satu feed
+  function loadFeed(url){
     return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
       .then(res => res.json())
       .then(data => {
-        if (!data.items) return [];
+        if(!data.items) return [];
         return data.items.map(item => ({
           title: item.title || "Judul tidak tersedia",
           thumbnail: item.thumbnail || item.enclosure?.link || '',
           date: item.pubDate ? item.pubDate.split(' ')[0] : '',
           fullDate: item.pubDate || '',
-          category: ''
+          link: item.link || '#',
+          category: item.category || ''
         }));
       })
       .catch(() => []);
   }
 
-  function renderNews(newsArray) {
-    allLoadedNews = newsArray.filter(n => n.title && n.title.trim() !== "");
-    displayNews(allLoadedNews);
-    updateYearOptions();
-  }
-
-  function displayNews(newsArray) {
-    const container = document.getElementById("berita-container");
-    container.innerHTML = "";
-
-    if(newsArray.length === 0) {
-      container.innerHTML = "<div style='color:#ff0000; font-weight:bold; text-align:center; margin-top:50px;'>Tidak ada berita pada rentang tanggal tersebut.</div>";
+  // Render berita ke grid
+  function renderNews(newsArray){
+    const container = document.getElementById('berita-container');
+    container.innerHTML = '';
+    if(newsArray.length === 0){
+      container.innerHTML = "<div style='color:#f00; font-weight:bold; text-align:center; margin-top:50px;'>Tidak ada berita pada rentang tanggal tersebut.</div>";
       return;
     }
-
     newsArray.forEach(news => {
-      const item = document.createElement("div");
-      item.className = "news-item";
-      item.innerHTML = `
-        <div class='category'>${news.category || ''}</div>
-        ${news.thumbnail ? `<img src='${news.thumbnail}' alt='thumbnail'/>` : ''}
-        <div><strong>${news.title}</strong></div>
-        <div class='date'>${news.fullDate}</div>
+      const div = document.createElement('div');
+      div.className = 'news-item';
+      div.innerHTML = `
+        <div class="category">${escapeHTML(news.category)}</div>
+        ${news.thumbnail ? `<a href="${news.link}" target="_blank" rel="noopener noreferrer"><img src="${news.thumbnail}" alt="thumbnail"/></a>` : ''}
+        <strong><a href="${news.link}" target="_blank" rel="noopener noreferrer">${escapeHTML(news.title)}</a></strong>
+        <div class="date">${escapeHTML(news.fullDate)}</div>
       `;
-      container.appendChild(item);
+      container.appendChild(div);
     });
   }
 
-  // FILTER TANGGAL ADVANCED
-  function getUniqueYears() {
-    const years = new Set();
-    allLoadedNews.forEach(news => {
-      if(news.fullDate) {
-        const y = new Date(news.fullDate).getFullYear();
-        if (!isNaN(y)) years.add(y);
-      }
-    });
-    return Array.from(years).sort((a,b) => b - a);
+  // SETUP FILTER TANGGAL
+  const yearSelect = document.getElementById('filterYear');
+  const monthSelect = document.getElementById('filterMonth');
+  const daySelect = document.getElementById('filterDay');
+
+  function setupDateFilters(newsArray){
+    // ambil semua tanggal unik dari berita
+    const dates = newsArray.map(n => n.fullDate).filter(d => d).map(d => new Date(d));
+    const uniqueYears = [...new Set(dates.map(d => d.getFullYear()))].sort((a,b)=>b-a);
+    yearSelect.innerHTML = '<option value="">-- Tahun --</option>';
+    uniqueYears.forEach(y => yearSelect.innerHTML += `<option value="${y}">${y}</option>`);
+    monthSelect.innerHTML = '<option value="">-- Bulan --</option>';
+    monthSelect.disabled = true;
+    daySelect.innerHTML = '<option value="">-- Hari --</option>';
+    daySelect.disabled = true;
   }
 
-  function getMonthsForYear(year) {
-    const months = new Set();
-    allLoadedNews.forEach(news => {
-      if(news.fullDate) {
-        const d = new Date(news.fullDate);
-        if(d.getFullYear() === year) {
-          months.add(d.getMonth()+1);
-        }
-      }
-    });
-    return Array.from(months).sort((a,b) => a - b);
-  }
-
-  function getDaysForYearMonth(year, month) {
-    const days = new Set();
-    allLoadedNews.forEach(news => {
-      if(news.fullDate) {
-        const d = new Date(news.fullDate);
-        if(d.getFullYear() === year && (d.getMonth()+1) === month) {
-          days.add(d.getDate());
-        }
-      }
-    });
-    return Array.from(days).sort((a,b) => a - b);
-  }
-
-  function updateYearOptions() {
-    const yearSelect = document.getElementById('filterYear');
-    yearSelect.innerHTML = '<option value="">--Pilih Tahun--</option>';
-    const years = getUniqueYears();
-    years.forEach(y => {
-      const opt = document.createElement('option');
-      opt.value = y;
-      opt.textContent = y;
-      yearSelect.appendChild(opt);
-    });
-    document.getElementById('filterMonth').innerHTML = '<option value="">--Pilih Bulan--</option>';
-    document.getElementById('filterMonth').disabled = true;
-    document.getElementById('filterDay').innerHTML = '<option value="">--Pilih Tanggal--</option>';
-    document.getElementById('filterDay').disabled = true;
-  }
-
-  function updateMonthOptions() {
-    const year = parseInt(document.getElementById('filterYear').value);
-    const monthSelect = document.getElementById('filterMonth');
-    monthSelect.innerHTML = '<option value="">--Pilih Bulan--</option>';
-    document.getElementById('filterDay').innerHTML = '<option value="">--Pilih Tanggal--</option>';
-    document.getElementById('filterDay').disabled = true;
-
-    if (!year) {
+  function updateMonthOptions(){
+    const year = parseInt(yearSelect.value);
+    if(!year){
+      monthSelect.innerHTML = '<option value="">-- Bulan --</option>';
       monthSelect.disabled = true;
-      return;
-    }
-    monthSelect.disabled = false;
-    const months = getMonthsForYear(year);
-    months.forEach(m => {
-      const opt = document.createElement('option');
-      opt.value = m;
-      opt.textContent = m.toString().padStart(2,'0');
-      monthSelect.appendChild(opt);
-    });
-  }
-
-  function updateDayOptions() {
-    const year = parseInt(document.getElementById('filterYear').value);
-    const month = parseInt(document.getElementById('filterMonth').value);
-    const daySelect = document.getElementById('filterDay');
-    daySelect.innerHTML = '<option value="">--Pilih Tanggal--</option>';
-
-    if (!year || !month) {
+      daySelect.innerHTML = '<option value="">-- Hari --</option>';
       daySelect.disabled = true;
       return;
     }
-    daySelect.disabled = false;
-
-    const days = getDaysForYearMonth(year, month);
-    days.forEach(d => {
-      const opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = d.toString().padStart(2,'0');
-      daySelect.appendChild(opt);
+    // Filter bulan yang ada di tahun tersebut
+    const filteredDates = allNews.filter(n => {
+      const dt = new Date(n.fullDate);
+      return dt.getFullYear() === year;
+    }).map(n => new Date(n.fullDate));
+    const uniqueMonths = [...new Set(filteredDates.map(d => d.getMonth()))].sort((a,b)=>a-b);
+    monthSelect.innerHTML = '<option value="">-- Bulan --</option>';
+    uniqueMonths.forEach(m => {
+      monthSelect.innerHTML += `<option value="${m}">${m+1}</option>`;
     });
+    monthSelect.disabled = false;
+    daySelect.innerHTML = '<option value="">-- Hari --</option>';
+    daySelect.disabled = true;
   }
 
-  function applyAdvancedDateFilter() {
-    const year = parseInt(document.getElementById('filterYear').value);
-    const month = parseInt(document.getElementById('filterMonth').value);
-    const day = parseInt(document.getElementById('filterDay').value);
-
-    if(!year) {
-      alert('Pilih minimal tahun');
+  function updateDayOptions(){
+    const year = parseInt(yearSelect.value);
+    const month = parseInt(monthSelect.value);
+    if(isNaN(year) || isNaN(month)){
+      daySelect.innerHTML = '<option value="">-- Hari --</option>';
+      daySelect.disabled = true;
       return;
     }
+    // Filter hari yang ada di bulan dan tahun itu
+    const filteredDates = allNews.filter(n => {
+      const dt = new Date(n.fullDate);
+      return dt.getFullYear() === year && dt.getMonth() === month;
+    }).map(n => new Date(n.fullDate));
+    const uniqueDays = [...new Set(filteredDates.map(d => d.getDate()))].sort((a,b)=>a-b);
+    daySelect.innerHTML = '<option value="">-- Hari --</option>';
+    uniqueDays.forEach(d => {
+      daySelect.innerHTML += `<option value="${d}">${d}</option>`;
+    });
+    daySelect.disabled = false;
+  }
 
-    const filtered = allLoadedNews.filter(news => {
-      const d = new Date(news.fullDate);
-      if(isNaN(d)) return false;
-      if(d.getFullYear() !== year) return false;
-      if(month && (d.getMonth()+1) !== month) return false;
-      if(day && d.getDate() !== day) return false;
+  // Terapkan filter tanggal kompleks
+  function applyAdvancedDateFilter(){
+    const year = yearSelect.value;
+    const month = monthSelect.value;
+    const day = daySelect.value;
+
+    filteredByDate = allNews.filter(n => {
+      const dt = new Date(n.fullDate);
+      if(year && dt.getFullYear() != year) return false;
+      if(month && dt.getMonth() != month) return false;
+      if(day && dt.getDate() != day) return false;
       return true;
     });
-
-    displayNews(filtered);
+    renderNews(filteredByDate);
   }
 
-  function resetAdvancedDateFilter(display = true) {
-    document.getElementById('filterYear').value = '';
-    document.getElementById('filterMonth').innerHTML = '<option value="">--Pilih Bulan--</option>';
-    document.getElementById('filterMonth').disabled = true;
-    document.getElementById('filterDay').innerHTML = '<option value="">--Pilih Tanggal--</option>';
-    document.getElementById('filterDay').disabled = true;
-
-    if(display) displayNews(allLoadedNews);
+  function resetAdvancedDateFilter(){
+    filteredByDate = null;
+    yearSelect.value = '';
+    monthSelect.innerHTML = '<option value="">-- Bulan --</option>';
+    monthSelect.disabled = true;
+    daySelect.innerHTML = '<option value="">-- Hari --</option>';
+    daySelect.disabled = true;
+    renderNews(allNews);
   }
 
-  // Visitor tracking & list
-  function updateVisitorCount() {
-    document.getElementById('visitor-count').textContent = visitors.length;
-    renderVisitorList();
-  }
+  // VISITOR SECTION
+  const visitorCountSpan = document.getElementById('visitor-count');
+  const visitorListDiv = document.getElementById('visitor-list');
+  const visitorNameInput = document.getElementById('visitor-name');
 
-  function renderVisitorList() {
-    const listEl = document.getElementById('visitor-list');
-    if(visitors.length === 0) {
-      listEl.innerHTML = '<i>Belum ada pengunjung yang mengisi nama.</i>';
-      return;
+  function updateVisitorCount(){
+    visitorCountSpan.textContent = visitors.length;
+    if(visitors.length === 0){
+      visitorListDiv.innerHTML = '<i>Belum ada pengunjung yang mengisi nama.</i>';
+    } else {
+      visitorListDiv.innerHTML = visitors.map(v => escapeHTML(v)).join('<br>');
     }
-    listEl.innerHTML = visitors.map(v => `<div>👤 ${escapeHTML(v)}</div>`).join('');
   }
 
-  function addVisitor() {
-    const input = document.getElementById('visitor-name');
-    const name = input.value.trim();
-    if(name.length < 2) {
+  function addVisitor(){
+    let name = visitorNameInput.value.trim();
+    if(name.length < 2){
       alert('Nama minimal 2 karakter, bro!');
-      input.focus();
+      visitorNameInput.focus();
       return;
     }
-    if(visitors.includes(name)) {
-      alert('Nama sudah terdaftar, bro!');
-      input.value = '';
-      input.focus();
-      return;
+    if(!visitors.includes(name)){
+      visitors.push(name);
+      localStorage.setItem('hanoman_visitors', JSON.stringify(visitors));
+      updateVisitorCount();
     }
-    visitors.push(name);
-    localStorage.setItem('hanoman_visitors', JSON.stringify(visitors));
-    input.value = '';
-    updateVisitorCount();
+    visitorNameInput.value = '';
   }
 
-  // Simple escape untuk keamanan tampilan nama
-  function escapeHTML(text) {
-    return text.replace(/[&<>"']/g, function(m) {
-      return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[m];
-    });
-  }
 </script>
-
 </body>
 </html>
+
 
