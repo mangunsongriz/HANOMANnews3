@@ -12,101 +12,49 @@
       margin: 0;
       padding: 0;
     }
-    header {
-      background-color: #222;
-      padding: 1rem;
-      text-align: center;
-      border-bottom: 3px solid #0f0;
-    }
-    header h1 {
-      margin: 0;
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: #000;
       color: #0f0;
-      font-size: 2rem;
-      letter-spacing: 2px;
-    }
-    nav {
-      background-color: #1b1b1b;
-      padding: 0.5rem;
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      border-bottom: 1px solid #333;
+      align-items: center;
+      z-index: 9999;
     }
-    nav button {
-      background-color: #111;
-      border: 1px solid #0f0;
-      color: #0f0;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    nav button.active {
-      background-color: #0f0;
-      color: #000;
-    }
-    #search-bar {
-      margin: 1rem auto;
-      text-align: center;
-    }
-    #search-input {
-      width: 80%;
+    #login-screen input {
+      margin: 0.5rem;
       padding: 0.5rem;
       font-size: 1rem;
-      border-radius: 4px;
+      background: #111;
       border: 1px solid #0f0;
-      background-color: #000;
       color: #0f0;
-    }
-    main {
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-    .card {
-      background-color: #1a1a1a;
-      border: 1px solid #333;
-      padding: 1rem;
-      border-radius: 8px;
-      display: block;
-    }
-    .card.hidden {
-      display: none;
-    }
-    .card h2 {
-      font-size: 1.2rem;
-      margin-top: 0;
-      color: #0f0;
-    }
-    .card p {
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-    .card img {
-      width: 100%;
-      height: auto;
       border-radius: 4px;
-      margin-bottom: 0.5rem;
     }
-    footer {
-      background-color: #222;
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.8rem;
-      color: #555;
-      border-top: 1px solid #333;
+    #login-screen button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background: #0f0;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
     }
-    #loading {
-      text-align: center;
-      font-style: italic;
-      color: #888;
-      margin-top: 2rem;
+    header, nav, main, footer, #search-bar {
+      display: none;
     }
   </style>
 </head>
 <body>
+  <div id="login-screen">
+    <h2>Masukkan Password</h2>
+    <input type="password" id="password" placeholder="Password...">
+    <button onclick="checkPassword()">Masuk</button>
+    <p id="login-msg"></p>
+  </div>
+
   <header>
     <h1>HANOMAN NEWS</h1>
   </header>
@@ -121,13 +69,30 @@
     <input type="text" id="search-input" placeholder="Cari judul berita...">
   </div>
   <div id="loading">Memuat berita...</div>
-  <main id="news-container">
-    <!-- Artikel berita akan muncul di sini -->
-  </main>
+  <main id="news-container"></main>
   <footer>
     &copy; 2025 HANOMAN NEWS - Sistem Pemantauan Berita Otomatis
   </footer>
+
   <script>
+    const PASSWORD = "hanoman123";
+    function checkPassword() {
+      const input = document.getElementById('password').value;
+      const msg = document.getElementById('login-msg');
+      if (input === PASSWORD) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.querySelector('header').style.display = 'block';
+        document.querySelector('nav').style.display = 'flex';
+        document.querySelector('main').style.display = 'grid';
+        document.querySelector('footer').style.display = 'block';
+        document.querySelector('#search-bar').style.display = 'block';
+        loadNews();
+      } else {
+        msg.textContent = "Password salah!";
+        msg.style.color = "red";
+      }
+    }
+
     const sources = [
       { url: "https://rss.cnn.com/rss/edition.rss", tag: "nasional" },
       { url: "https://www.antaranews.com/rss/nasional.xml", tag: "nasional" },
@@ -182,22 +147,30 @@
       document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
 
-      const cards = document.querySelectorAll('.card');
-      cards.forEach(card => {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      document.querySelectorAll('.card').forEach(card => {
         const ctag = card.getAttribute('data-tag');
-        card.classList.toggle('hidden', tag !== 'all' && ctag !== tag);
+        const title = card.querySelector('h2').textContent.toLowerCase();
+        const showByTag = tag === 'all' || ctag === tag;
+        const showBySearch = title.includes(query);
+        card.style.display = showByTag && showBySearch ? 'block' : 'none';
       });
     }
 
     document.getElementById('search-input').addEventListener('input', function () {
       const query = this.value.toLowerCase();
+      const activeBtn = document.querySelector('nav button.active');
+      const activeTag = activeBtn ? activeBtn.textContent.toLowerCase() : 'all';
+      const tag = activeTag === 'semua' ? 'all' : activeTag;
+
       document.querySelectorAll('.card').forEach(card => {
+        const ctag = card.getAttribute('data-tag');
         const title = card.querySelector('h2').textContent.toLowerCase();
-        card.style.display = title.includes(query) ? 'block' : 'none';
+        const showByTag = tag === 'all' || ctag === tag;
+        const showBySearch = title.includes(query);
+        card.style.display = showByTag && showBySearch ? 'block' : 'none';
       });
     });
-
-    loadNews();
   </script>
 </body>
 </html>
