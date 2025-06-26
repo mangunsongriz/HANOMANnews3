@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HANOMAN III NEWS</title>
+  <title>HANOMAN NEWS</title>
   <style>
     body {
       font-family: 'Courier New', Courier, monospace;
@@ -16,7 +16,6 @@
       padding: 20px;
       user-select: none;
     }
-
     header {
       text-align: center;
       padding: 20px 10px;
@@ -28,7 +27,6 @@
       text-transform: uppercase;
       letter-spacing: 2px;
     }
-
     h1 {
       margin: 0;
       font-size: 3em;
@@ -39,19 +37,16 @@
         0 0 20px #00ff00,
         0 0 30px #0f0;
     }
-
     header p {
       font-style: italic;
       font-size: 1.1em;
       color: #a0ffa0;
       margin-top: 5px;
     }
-
     nav {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 15px;
     }
-
     nav button {
       background-color: #111;
       color: #00ff00;
@@ -66,7 +61,6 @@
       transition: all 0.3s ease;
       box-shadow: 0 0 8px #00ff00aa;
     }
-
     nav button:hover {
       background-color: #ff0000;
       color: #111;
@@ -76,14 +70,56 @@
         0 0 20px #ff0000cc;
       transform: scale(1.05);
     }
+    /* Filter tanggal cascading */
+    #filter-date-advanced {
+      text-align: center;
+      margin-bottom: 30px;
+      user-select: none;
+      color: #00ff00;
+      font-weight: 700;
+    }
+    #filter-date-advanced label {
+      margin: 0 10px;
+    }
+    #filter-date-advanced select {
+      background: #111;
+      color: #0f0;
+      border: 2px solid #00ff00;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: text;
+      min-width: 120px;
+      text-align: center;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+    #filter-date-advanced button {
+      background: #111;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 8px 16px;
+      border-radius: 6px;
+      margin-left: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    #filter-date-advanced button:hover {
+      background: #ff0000;
+      border-color: #ff0000;
+      color: #111;
+      transform: scale(1.05);
+    }
 
     #berita-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 15px;
       min-height: 200px;
     }
-
     .news-item {
       background: rgba(0, 0, 0, 0.85);
       padding: 12px 14px;
@@ -94,15 +130,16 @@
       transition: box-shadow 0.3s ease, background-color 0.25s ease;
       user-select: none;
       font-size: 0.9em;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-
     .news-item:hover {
       background-color: rgba(0, 255, 0, 0.15);
       box-shadow:
         0 0 22px 3px #00ff00dd,
         inset 0 0 15px 2px #00ff0066;
     }
-
     .news-item img {
       width: 100%;
       max-height: 110px;
@@ -112,7 +149,6 @@
       box-shadow: 0 0 8px #00ff00bb;
       user-select: none;
     }
-
     .category {
       display: inline-block;
       font-weight: 900;
@@ -127,27 +163,24 @@
       margin-bottom: 8px;
       font-size: 0.75em;
     }
-
     .date {
       font-size: 0.75em;
       color: #aaa;
       font-style: italic;
       margin-top: 10px;
       user-select: text;
+      text-align: right;
     }
-
     @media (max-width: 900px) {
       #berita-container {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       }
     }
-
     @media (max-width: 480px) {
       #berita-container {
         grid-template-columns: 1fr;
       }
     }
-
     .footer {
       text-align: center;
       margin-top: 40px;
@@ -178,6 +211,29 @@
     <button onclick="fetchRSS('hotzone')">Hot Zone</button>
     <button onclick="fetchRSS('ekonomi')">Ekonomi</button>
   </nav>
+
+  <div id="filter-date-advanced">
+    <label for="filterYear">Tahun:
+      <select id="filterYear" onchange="updateMonthOptions()">
+        <option value="">--Pilih Tahun--</option>
+      </select>
+    </label>
+    &nbsp;&nbsp;
+    <label for="filterMonth">Bulan:
+      <select id="filterMonth" onchange="updateDayOptions()" disabled>
+        <option value="">--Pilih Bulan--</option>
+      </select>
+    </label>
+    &nbsp;&nbsp;
+    <label for="filterDay">Tanggal:
+      <select id="filterDay" disabled>
+        <option value="">--Pilih Tanggal--</option>
+      </select>
+    </label>
+    &nbsp;&nbsp;
+    <button onclick="applyAdvancedDateFilter()">Filter</button>
+    <button onclick="resetAdvancedDateFilter()">Reset</button>
+  </div>
 
   <div id="berita-container">Memuat berita terkini...</div>
 
@@ -347,68 +403,81 @@
         'https://news.detik.com/rss',
         'https://www.tribunnews.com/rss/nasional',
         'https://www.jpnn.com/index.php?mib=rss&id=2',
+        'https://www.sindonews.com/rss/nasional',
+        'https://www.merdeka.com/rss/nasional',
         'https://www.okezone.com/rss/hukum',
-        'https://www.viva.co.id/rss/indeks/hukum',
-        'https://www.liputan6.com/rss/hukum',
         'https://www.beritasatu.com/rss/hukum',
-        'https://www.tempo.co/rss/hukum',
+        'https://www.viva.co.id/rss/indeks/hukum',
         'https://www.metrotvnews.com/rss/hukum',
-        'https://www.antaranews.com/rss/hukum.xml',
-        'https://www.sindonews.com/feed/hukum',
+        'https://www.liputan6.com/rss/hukum',
         'https://www.tribunnews.com/rss/hukum',
+        'https://www.cnnindonesia.com/hukum/rss',
         'https://news.okezone.com/rss/hukum',
-        'https://nasional.kompas.com/rss/hukum',
-        'https://www.cnnindonesia.com/nasional/hukum/rss',
-        'https://www.jpnn.com/index.php?mib=rss&id=13',
-        'https://www.detik.com/rss/indeks/hukum',
-        'https://www.cnnindonesia.com/nasional/rss'
+        'https://www.pikiran-rakyat.com/rss/hukum',
+        'https://www.kabarindonesia.com/rss/hukum',
+        'https://www.suara.com/rss/hukum',
+        'https://www.kompas.com/rss/hukum',
+        'https://www.tempo.co/rss/nasional'
       ]
     };
 
-    let currentCategory = 'all';
+    let allLoadedNews = [];
 
     function fetchRSS(category) {
-      currentCategory = category;
       const container = document.getElementById("berita-container");
       container.innerHTML = "Memuat berita...";
 
+      allLoadedNews = [];
+      resetAdvancedDateFilter(false); // reset tanpa display ulang, karena kita akan display setelah data load
+
       if (category === 'all') {
-        const allFeeds = Object.values(feeds).flat();
-        Promise.all(allFeeds.map(url => loadFeed(url, 'Umum'))).then(all => {
-          const flat = all.flat();
-          renderNews(flat);
+        let allFeeds = [];
+        Object.values(feeds).forEach(arr => allFeeds = allFeeds.concat(arr));
+        allFeeds = allFeeds.slice(0, 100); // limit max 100 feed source to avoid overload
+
+        Promise.all(allFeeds.map(url => loadFeed(url))).then(results => {
+          const combined = results.flat();
+          combined.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
+          renderNews(combined);
         });
       } else {
         const urls = feeds[category];
-        if (!urls) {
-          container.innerHTML = "Kategori tidak ditemukan.";
-          return;
-        }
-        Promise.all(urls.map(url => loadFeed(url, category))).then(all => {
-          const flat = all.flat();
-          renderNews(flat);
+        Promise.all(urls.map(url => loadFeed(url))).then(results => {
+          const combined = results.flat();
+          combined.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
+          renderNews(combined);
         });
       }
     }
 
-    function loadFeed(url, category) {
+    function loadFeed(url) {
       return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
         .then(res => res.json())
-        .then(data => data.items.map(item => ({
-          title: item.title,
-          thumbnail: item.thumbnail || item.enclosure?.link || '',
-          date: item.pubDate.split(' ')[0],
-          category: category,
-          fullDate: item.pubDate
-        })))
-        .catch(err => [{ title: "Gagal memuat RSS: " + url, date: '', category: category }]);
+        .then(data => {
+          if (!data.items) return [];
+          return data.items.map(item => ({
+            title: item.title || "Judul tidak tersedia",
+            thumbnail: item.thumbnail || item.enclosure?.link || '',
+            date: item.pubDate ? item.pubDate.split(' ')[0] : '',
+            fullDate: item.pubDate || '',
+            category: ''
+          }));
+        })
+        .catch(() => []);
     }
 
     function renderNews(newsArray) {
+      allLoadedNews = newsArray.filter(n => n.title && n.title.trim() !== "");
+      displayNews(allLoadedNews);
+      updateYearOptions();
+    }
+
+    function displayNews(newsArray) {
       const container = document.getElementById("berita-container");
       container.innerHTML = "";
+
       if(newsArray.length === 0) {
-        container.innerHTML = "<p>Tidak ada berita tersedia.</p>";
+        container.innerHTML = "<div style='color:#ff0000; font-weight:bold; text-align:center; margin-top:50px;'>Tidak ada berita pada rentang tanggal tersebut.</div>";
         return;
       }
 
@@ -416,8 +485,8 @@
         const item = document.createElement("div");
         item.className = "news-item";
         item.innerHTML = `
-          <div class='category'>${news.category}</div>
-          ${news.thumbnail ? `<img src='${news.thumbnail}' alt='thumbnail' loading='lazy'/>` : ''}
+          <div class='category'>${news.category || ''}</div>
+          ${news.thumbnail ? `<img src='${news.thumbnail}' alt='thumbnail'/>` : ''}
           <div><strong>${news.title}</strong></div>
           <div class='date'>${news.fullDate}</div>
         `;
@@ -425,14 +494,139 @@
       });
     }
 
-    // Auto refresh tiap 5 menit (300000 ms)
-    setInterval(() => {
-      fetchRSS(currentCategory);
-    }, 300000);
+    // FILTER TANGGAL ADVANCED
+    function getUniqueYears() {
+      const years = new Set();
+      allLoadedNews.forEach(news => {
+        if(news.fullDate) {
+          const y = new Date(news.fullDate).getFullYear();
+          if (!isNaN(y)) years.add(y);
+        }
+      });
+      return Array.from(years).sort((a,b) => b - a);
+    }
 
-    // Load default (semua)
+    function getMonthsForYear(year) {
+      const months = new Set();
+      allLoadedNews.forEach(news => {
+        if(news.fullDate) {
+          const d = new Date(news.fullDate);
+          if(d.getFullYear() === year) {
+            months.add(d.getMonth()+1);
+          }
+        }
+      });
+      return Array.from(months).sort((a,b) => a - b);
+    }
+
+    function getDaysForYearMonth(year, month) {
+      const days = new Set();
+      allLoadedNews.forEach(news => {
+        if(news.fullDate) {
+          const d = new Date(news.fullDate);
+          if(d.getFullYear() === year && (d.getMonth()+1) === month) {
+            days.add(d.getDate());
+          }
+        }
+      });
+      return Array.from(days).sort((a,b) => a - b);
+    }
+
+    function updateYearOptions() {
+      const yearSelect = document.getElementById('filterYear');
+      yearSelect.innerHTML = '<option value="">--Pilih Tahun--</option>';
+      const years = getUniqueYears();
+      years.forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearSelect.appendChild(opt);
+      });
+      // Reset dependent selects
+      document.getElementById('filterMonth').innerHTML = '<option value="">--Pilih Bulan--</option>';
+      document.getElementById('filterMonth').disabled = true;
+      document.getElementById('filterDay').innerHTML = '<option value="">--Pilih Tanggal--</option>';
+      document.getElementById('filterDay').disabled = true;
+    }
+
+    function updateMonthOptions() {
+      const year = parseInt(document.getElementById('filterYear').value);
+      const monthSelect = document.getElementById('filterMonth');
+      monthSelect.innerHTML = '<option value="">--Pilih Bulan--</option>';
+      document.getElementById('filterDay').innerHTML = '<option value="">--Pilih Tanggal--</option>';
+      document.getElementById('filterDay').disabled = true;
+
+      if (!year) {
+        monthSelect.disabled = true;
+        return;
+      }
+      monthSelect.disabled = false;
+      const months = getMonthsForYear(year);
+      months.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m.toString().padStart(2,'0');
+        monthSelect.appendChild(opt);
+      });
+    }
+
+    function updateDayOptions() {
+      const year = parseInt(document.getElementById('filterYear').value);
+      const month = parseInt(document.getElementById('filterMonth').value);
+      const daySelect = document.getElementById('filterDay');
+      daySelect.innerHTML = '<option value="">--Pilih Tanggal--</option>';
+
+      if (!year || !month) {
+        daySelect.disabled = true;
+        return;
+      }
+      daySelect.disabled = false;
+
+      const days = getDaysForYearMonth(year, month);
+      days.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d.toString().padStart(2,'0');
+        daySelect.appendChild(opt);
+      });
+    }
+
+    function applyAdvancedDateFilter() {
+      const year = parseInt(document.getElementById('filterYear').value);
+      const month = parseInt(document.getElementById('filterMonth').value);
+      const day = parseInt(document.getElementById('filterDay').value);
+
+      if(!year) {
+        alert('Pilih minimal tahun');
+        return;
+      }
+
+      const filtered = allLoadedNews.filter(news => {
+        const d = new Date(news.fullDate);
+        if(isNaN(d)) return false;
+        if(d.getFullYear() !== year) return false;
+        if(month && (d.getMonth()+1) !== month) return false;
+        if(day && d.getDate() !== day) return false;
+        return true;
+      });
+
+      displayNews(filtered);
+    }
+
+    function resetAdvancedDateFilter(display = true) {
+      document.getElementById('filterYear').value = '';
+      document.getElementById('filterMonth').innerHTML = '<option value="">--Pilih Bulan--</option>';
+      document.getElementById('filterMonth').disabled = true;
+      document.getElementById('filterDay').innerHTML = '<option value="">--Pilih Tanggal--</option>';
+      document.getElementById('filterDay').disabled = true;
+
+      if(display) displayNews(allLoadedNews);
+    }
+
+    // Load default semua
     fetchRSS('all');
   </script>
 </body>
 </html>
+
 
