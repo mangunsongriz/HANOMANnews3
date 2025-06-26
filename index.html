@@ -1,235 +1,100 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HANOMAN NEWS</title>
+  <!-- Tambahkan background intelijen -->
   <style>
     body {
-      background: url('https://upload.wikimedia.org/wikipedia/commons/2/2d/Hanuman_by_Basohli_painters.jpg') no-repeat center center fixed;
+      background: url('https://images.unsplash.com/photo-1635993631736-f6d84297a422?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
       background-size: cover;
-      color: #eee;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
+      color: #f0f0f0;
+      font-family: 'Courier New', Courier, monospace;
     }
-    header {
-      background-color: rgba(0, 0, 0, 0.8);
-      padding: 1rem;
-      text-align: center;
-      border-bottom: 3px solid #0f0;
+    label, input, #clock, #visitorCount {
+      color: #f0f0f0;
     }
-    header h1 {
-      margin: 0;
-      color: #0f0;
-      font-size: 2rem;
-      letter-spacing: 2px;
-    }
-    #datetime {
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-    nav {
-      background-color: rgba(0, 0, 0, 0.85);
-      padding: 0.5rem;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      border-bottom: 1px solid #333;
-    }
-    nav button {
-      background-color: #111;
-      border: 1px solid #0f0;
-      color: #0f0;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    nav button.active {
-      background-color: #0f0;
-      color: #000;
-    }
-    #search-bar {
-      margin: 1rem auto;
-      text-align: center;
-    }
-    #search-input {
-      width: 80%;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border-radius: 4px;
-      border: 1px solid #0f0;
-      background-color: #000;
-      color: #0f0;
-    }
-    main {
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      background-color: rgba(0,0,0,0.7);
-    }
-    .card {
-      background-color: #1a1a1a;
-      border: 1px solid #333;
-      padding: 1rem;
+    .news-item {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      margin: 10px;
       border-radius: 8px;
-      display: block;
-    }
-    .card h2 {
-      font-size: 1.2rem;
-      margin-top: 0;
-      color: #0f0;
-    }
-    .card p {
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-    .card img {
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-    }
-    footer {
-      background-color: rgba(0, 0, 0, 0.8);
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.8rem;
-      color: #aaa;
-      border-top: 1px solid #333;
-    }
-    #loading {
-      text-align: center;
-      font-style: italic;
-      color: #888;
-      margin-top: 2rem;
-    }
-    #visitor-counter {
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-      color: #888;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>HANOMAN NEWS</h1>
-    <div id="datetime"></div>
-    <div id="visitor-counter"></div>
-  </header>
-  <nav>
-    <button onclick="filterNews('all', this)" class="active">Semua</button>
-    <button onclick="filterNews('nasional', this)">Nasional</button>
-    <button onclick="filterNews('internasional', this)">Internasional</button>
-    <button onclick="filterNews('papua', this)">Papua</button>
-    <button onclick="filterNews('maluku', this)">Maluku</button>
-  </nav>
-  <div id="search-bar">
-    <input type="text" id="search-input" placeholder="Cari judul berita...">
+  <h1 style="text-align:center;">HANOMAN NEWS</h1>
+
+  <!-- Menu utama -->
+  <div style="padding: 10px; text-align: center;">
+    <label for="datePicker">Pilih Tanggal Berita:</label>
+    <input type="date" id="datePicker" onchange="filterByDate()" />
   </div>
-  <div id="loading">Memuat berita...</div>
-  <main id="news-container"></main>
-  <footer>
-    &copy; 2025 HANOMAN NEWS - Sistem Pemantauan Berita Otomatis
-  </footer>
+
+  <!-- Jam dan tanggal sekarang -->
+  <div style="text-align: center; font-size: 14px; color: #ccc; margin-bottom: 5px;">
+    <span id="clock"></span>
+  </div>
+
+  <!-- Jumlah pengunjung -->
+  <div style="text-align: center; font-size: 13px; color: #999; margin-bottom: 15px;">
+    Total pengunjung: <span id="visitorCount">0</span>
+  </div>
+
+  <!-- Kontainer berita -->
+  <div id="newsContainer" style="padding: 0 20px;"></div>
 
   <script>
-    function updateDateTime() {
+    function updateClock() {
       const now = new Date();
-      const dateTime = now.toLocaleString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit', second:'2-digit' });
-      document.getElementById('datetime').textContent = `Waktu saat ini: ${dateTime}`;
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const timeString = now.toLocaleTimeString();
+      const dateString = now.toLocaleDateString('id-ID', options);
+      document.getElementById("clock").innerHTML = `${dateString} - ${timeString}`;
     }
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
+    setInterval(updateClock, 1000);
+    updateClock();
 
-    let visitCount = localStorage.getItem('visitCount') || 0;
-    visitCount++;
-    localStorage.setItem('visitCount', visitCount);
-    document.getElementById('visitor-counter').textContent = `Jumlah kunjungan di perangkat ini: ${visitCount}`;
+    // Simulasi visitor count (localStorage)
+    if (!localStorage.getItem("hanoman_visitor")) {
+      localStorage.setItem("hanoman_visitor", "true");
+      let current = localStorage.getItem("hanoman_visitorCount") || 0;
+      localStorage.setItem("hanoman_visitorCount", parseInt(current) + 1);
+    }
+    document.getElementById("visitorCount").innerText = localStorage.getItem("hanoman_visitorCount") || 1;
 
-    const sources = [
-      { url: "https://rss2json.com/feed/https://nasional.kompas.com/rss", tag: "nasional" },
-      { url: "https://rss2json.com/feed/https://www.cnnindonesia.com/nasional/rss", tag: "nasional" },
-      { url: "https://rss2json.com/feed/https://antaranews.com/rss/nasional.xml", tag: "nasional" },
-      { url: "http://feeds.bbci.co.uk/news/world/rss.xml", tag: "internasional" },
-      { url: "https://www.aljazeera.com/xml/rss/all.xml", tag: "internasional" },
-      { url: "https://www.theguardian.com/world/rss", tag: "internasional" },
-      { url: "https://rri.co.id/rss/papua.xml", tag: "papua" },
-      { url: "https://jubi.id/feed/", tag: "papua" },
-      { url: "https://papuainside.com/feed/", tag: "papua" },
-      { url: "https://rri.co.id/rss/maluku.xml", tag: "maluku" },
-      { url: "https://malukuterkini.com/feed/", tag: "maluku" },
-      { url: "https://ambonekspres.fajar.co.id/feed/", tag: "maluku" }
+    // Filter berita berdasarkan tanggal
+    function filterByDate() {
+      const selectedDate = document.getElementById("datePicker").value;
+      const articles = document.querySelectorAll(".news-item");
+
+      articles.forEach(article => {
+        const articleDate = article.getAttribute("data-date");
+        if (!selectedDate || articleDate === selectedDate) {
+          article.style.display = "block";
+        } else {
+          article.style.display = "none";
+        }
+      });
+    }
+
+    // Simulasi berita dummy (karena RSS fetch butuh backend/proxy)
+    const dummyNews = [
+      { title: "Operasi Intelijen Ditingkatkan di Perbatasan", date: "2025-06-25" },
+      { title: "Papua Siaga: TNI-Polri Gelar Patroli Gabungan", date: "2025-06-26" },
+      { title: "Maluku Utara Dilaporkan Tenang Meski Isu Hoax Merebak", date: "2025-06-26" },
     ];
 
-    async function fetchRSS(url) {
-      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
-      try {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-        return data.items.slice(0, 6);
-      } catch (e) {
-        console.error("Gagal fetch:", url);
-        return [];
-      }
-    }
-
-    async function loadNews() {
-      const container = document.getElementById("news-container");
-      const loading = document.getElementById("loading");
-      loading.textContent = "Mengambil data dari berbagai sumber...";
-
-      for (let source of sources) {
-        const articles = await fetchRSS(source.url);
-        articles.forEach(item => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.setAttribute("data-tag", source.tag);
-          card.innerHTML = `
-            <img src="${item.thumbnail || item.enclosure?.link || 'https://via.placeholder.com/300x150?text=No+Image'}" alt="Gambar Berita">
-            <h2>${item.title}</h2>
-            <p>${item.description.slice(0, 150)}...</p>
-            <a href="${item.link}" target="_blank" style="color:#0f0;">[Selengkapnya]</a>
-          `;
-          container.appendChild(card);
-        });
-      }
-      loading.remove();
-    }
-
-    function filterNews(tag, button) {
-      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-
-      const query = document.getElementById('search-input').value.toLowerCase();
-      document.querySelectorAll('.card').forEach(card => {
-        const ctag = card.getAttribute('data-tag');
-        const title = card.querySelector('h2').textContent.toLowerCase();
-        const showByTag = tag === 'all' || ctag === tag;
-        const showBySearch = title.includes(query);
-        card.style.display = showByTag && showBySearch ? 'block' : 'none';
-      });
-    }
-
-    document.getElementById('search-input').addEventListener('input', function () {
-      const query = this.value.toLowerCase();
-      const activeBtn = document.querySelector('nav button.active');
-      const activeTag = activeBtn ? activeBtn.textContent.toLowerCase() : 'all';
-      const tag = activeTag === 'semua' ? 'all' : activeTag;
-
-      document.querySelectorAll('.card').forEach(card => {
-        const ctag = card.getAttribute('data-tag');
-        const title = card.querySelector('h2').textContent.toLowerCase();
-        const showByTag = tag === 'all' || ctag === tag;
-        const showBySearch = title.includes(query);
-        card.style.display = showByTag && showBySearch ? 'block' : 'none';
-      });
+    const container = document.getElementById("newsContainer");
+    dummyNews.forEach(news => {
+      const div = document.createElement("div");
+      div.className = "news-item";
+      div.setAttribute("data-date", news.date);
+      div.innerHTML = `<h3>${news.title}</h3><p>Tanggal: ${news.date}</p>`;
+      container.appendChild(div);
     });
-
-    loadNews();
   </script>
 </body>
 </html>
