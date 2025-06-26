@@ -3,16 +3,48 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HANOMAN NEWS</title>
+<title>HANOMAN NEWS - Portal Intelijen Nasional</title>
 <style>
-  /* Style dasar dan grid */
   body {
     font-family: 'Courier New', Courier, monospace;
     background-color: #000;
-    color: #e0e0e0;
-    margin: 0;
-    padding: 20px;
+    color: #0f0;
+    margin: 0; padding: 20px;
   }
+  #splash {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.95);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 9999;
+  }
+  #splash input {
+    font-size: 1.5em;
+    padding: 10px;
+    margin-top: 15px;
+    width: 280px;
+    background: #111;
+    color: #0f0;
+    border: 2px solid #0f0;
+    border-radius: 6px;
+    outline: none;
+  }
+  #splash button {
+    margin-top: 15px;
+    font-size: 1.3em;
+    padding: 10px 25px;
+    background: #0f0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #000;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  #splash button:hover {
+    background: #6f6;
+  }
+
   header {
     text-align: center;
     padding: 10px;
@@ -38,204 +70,196 @@
     cursor: pointer;
     border-radius: 5px;
     font-size: 0.9em;
+    transition: background 0.3s, color 0.3s;
   }
-  nav button:hover {
+  nav button:hover, nav button.active {
     background-color: #00ff00;
     color: #111;
   }
-  #berita-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-  }
-  .news-item {
-    background: rgba(0, 50, 0, 0.85);
-    padding: 10px;
-    border-radius: 8px;
-    border-left: 5px solid #00ff00;
-    display: flex;
-    flex-direction: column;
-  }
-  .news-item img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-bottom: 8px;
-  }
-  .category {
-    font-weight: bold;
-    color: #ffcc00;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    font-size: 0.75em;
-  }
-  .date {
-    font-size: 0.75em;
-    color: #ccc;
-    margin-top: auto;
-  }
-  /* Splash screen overlay */
-  #splash {
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background-color: #000d;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    color: #00ff00;
-    font-family: 'Courier New', Courier, monospace;
-  }
-  #splash input[type="text"] {
-    padding: 10px;
-    font-size: 1.2em;
-    border-radius: 5px;
-    border: 2px solid #00ff00;
-    margin: 15px 0;
-    width: 240px;
-    background: #111;
-    color: #0f0;
-  }
-  #splash button {
-    padding: 10px 20px;
-    font-size: 1.1em;
-    background-color: #00ff00;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #000;
-    font-weight: bold;
-  }
-  #splash button:hover {
-    background-color: #0f0;
-  }
-  /* Filter tanggal */
+
   #filters {
-    display: flex;
+    display: none;
     justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
   }
   #filters select {
     background: #111;
-    color: #00ff00;
-    border: 1px solid #00ff00;
+    color: #0f0;
+    border: 1px solid #0f0;
     padding: 6px 10px;
     border-radius: 5px;
-    font-size: 0.9em;
+    font-size: 1em;
+    outline: none;
   }
-  /* Visitor Section */
-  #visitor-section {
-    margin-top: 25px;
-    background: rgba(0, 40, 0, 0.7);
-    padding: 15px;
-    border-radius: 10px;
-    color: #0f0;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  #visitor-section input[type="text"] {
-    width: calc(100% - 100px);
-    padding: 7px;
-    border-radius: 4px;
-    border: 1px solid #0f0;
-    background: #111;
-    color: #0f0;
-    margin-right: 6px;
-  }
-  #visitor-section button {
-    padding: 7px 14px;
-    background: #00ff00;
+  #filters button {
+    background: #0f0;
     border: none;
+    color: #000;
+    padding: 6px 12px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  #filters button:hover {
+    background: #6f6;
+  }
+
+  #berita-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .news-item {
+    background: rgba(0,0,0,0.6);
+    border-left: 5px solid #00ff00;
+    border-radius: 6px;
+    padding: 10px;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .news-item img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+  .news-item .category {
+    color: #ffcc00;
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 0.85em;
+  }
+  .news-item strong {
+    font-size: 1.1em;
+    margin-bottom: 6px;
+  }
+  .news-item .date {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: auto;
+    font-style: italic;
+  }
+
+  #visitor-section {
+    margin-top: 25px;
+    padding: 15px;
+    background: rgba(0,0,0,0.7);
+    border-radius: 8px;
+  }
+  #visitor-section input[type=text] {
+    background: #111;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 8px;
+    border-radius: 5px;
+    width: 200px;
+    font-size: 1em;
+    outline: none;
+  }
+  #visitor-section button {
+    background: #0f0;
+    border: none;
     color: #000;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 8px;
+    transition: background 0.3s ease;
   }
   #visitor-section button:hover {
-    background: #0f0;
+    background: #6f6;
   }
   #visitor-list {
-    margin-top: 10px;
-    font-size: 0.9em;
-    max-height: 150px;
+    margin-top: 12px;
+    color: #0f0;
+    font-size: 0.95em;
+    max-height: 140px;
     overflow-y: auto;
+    border: 1px solid #0f0;
+    padding: 10px;
+    border-radius: 6px;
+    background: #111;
   }
-  .footer {
+  #visitor-count {
+    font-weight: bold;
+  }
+
+  footer {
+    margin-top: 40px;
     text-align: center;
-    margin-top: 30px;
     font-size: 0.8em;
     color: #666;
+  }
+
+  @media(max-width:1200px) {
+    #berita-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media(max-width:700px) {
+    #berita-container {
+      grid-template-columns: repeat(1, 1fr);
+    }
   }
 </style>
 </head>
 <body>
 
-<!-- Splash screen input nama pengunjung -->
+<!-- Splash Screen input nama -->
 <div id="splash">
-  <div>Masukkan nama kamu dulu, bro!</div>
+  <div>Masukkan Nama Kamu untuk Masuk:</div>
   <input type="text" id="visitor-name-splash" placeholder="Nama kamu..." autofocus />
   <button onclick="submitName()">Masuk</button>
 </div>
 
-<header>
-  <h1>HANOMAN NEWS</h1>
-  <p>Portal Intelijen Nasional</p>
-</header>
+<!-- Konten utama -->
+<div id="main-content" style="display:none;">
+  <header>
+    <h1>HANOMAN NEWS</h1>
+    <p>Portal Intelijen Nasional</p>
+  </header>
 
-<nav>
-  <button onclick="fetchRSS('all')">Semua</button>
-  <button onclick="fetchRSS('nasional')">Nasional</button>
-  <button onclick="fetchRSS('papua')">Papua</button>
-  <button onclick="fetchRSS('maluku')">Maluku</button>
-  <button onclick="fetchRSS('regional')">Regional</button>
-  <button onclick="fetchRSS('internasional')">Internasional</button>
-  <button onclick="fetchRSS('cyber')">Cyber</button>
-  <button onclick="fetchRSS('hotzone')">Hot Zone</button>
-  <button onclick="fetchRSS('ekonomi')">Ekonomi</button>
-</nav>
+  <nav id="category-nav">
+    <button data-cat="all" class="active" onclick="fetchRSS('all', this)">Semua</button>
+    <button data-cat="nasional" onclick="fetchRSS('nasional', this)">Nasional</button>
+    <button data-cat="papua" onclick="fetchRSS('papua', this)">Papua</button>
+    <button data-cat="maluku" onclick="fetchRSS('maluku', this)">Maluku</button>
+    <button data-cat="regional" onclick="fetchRSS('regional', this)">Regional</button>
+    <button data-cat="internasional" onclick="fetchRSS('internasional', this)">Internasional</button>
+    <button data-cat="cyber" onclick="fetchRSS('cyber', this)">Cyber</button>
+    <button data-cat="hotzone" onclick="fetchRSS('hotzone', this)">Hot Zone</button>
+    <button data-cat="ekonomi" onclick="fetchRSS('ekonomi', this)">Ekonomi</button>
+  </nav>
 
-<!-- Filter tanggal -->
-<div id="filters" style="display:none;">
-  <select id="filterYear" onchange="updateMonthOptions(); applyAdvancedDateFilter();"></select>
-  <select id="filterMonth" onchange="updateDayOptions(); applyAdvancedDateFilter();" disabled></select>
-  <select id="filterDay" onchange="applyAdvancedDateFilter();" disabled></select>
-  <button onclick="resetAdvancedDateFilter()" style="background:#222; color:#0f0; border:1px solid #0f0; border-radius:5px; cursor:pointer;">Reset Tanggal</button>
-</div>
+  <div id="filters" style="display:none;">
+    <select id="filterYear" onchange="onYearChange()"></select>
+    <select id="filterMonth" onchange="onMonthChange()" disabled></select>
+    <select id="filterDay" onchange="applyAdvancedDateFilter()" disabled></select>
+    <button onclick="resetAdvancedDateFilter()">Reset Filter</button>
+  </div>
 
-<!-- Container berita -->
-<div id="berita-container">Memuat berita terkini...</div>
+  <div id="berita-container">Memuat berita...</div>
 
-<!-- Visitor section -->
-<div id="visitor-section" style="display:none;">
-  <h3>Jumlah Pengunjung: <span id="visitor-count">0</span></h3>
-  <input type="text" id="visitor-name" placeholder="Tambah nama pengunjung..." />
-  <button onclick="addVisitor()">Tambah</button>
-  <div id="visitor-list"><i>Belum ada pengunjung yang mengisi nama.</i></div>
-</div>
+  <section id="visitor-section">
+    <h3>Pengunjung: <span id="visitor-count">0</span></h3>
+    <input type="text" id="visitor-name" placeholder="Tambah nama pengunjung..." />
+    <button onclick="addVisitor()">Tambah</button>
+    <div id="visitor-list"><i>Belum ada pengunjung yang mengisi nama.</i></div>
+  </section>
 
-<div class="footer">
-  &copy; 2025 HANOMAN NEWS - Dibangun untuk ketahanan informasi nasional.
+  <footer>
+    &copy; 2025 HANOMAN NEWS - Dibangun untuk ketahanan informasi nasional.
+  </footer>
 </div>
 
 <script>
-  // Escape HTML aman supaya aman dari XSS
-  function escapeHTML(str) {
-    return str.replace(/[&<>"']/g, function(m) {
-      return ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[m];
-    });
-  }
-
-  // Data RSS feeds per kategori (minimal 20 tiap kategori)
+  // Feed RSS tiap kategori, tiap kategori ada array url maksimal 20 sumber
   const feeds = {
     nasional: [
       'https://www.antaranews.com/rss/nasional.xml',
@@ -246,18 +270,18 @@
       'https://www.jpnn.com/index.php?mib=rss&id=5',
       'https://www.merdeka.com/rss/nasional',
       'https://www.tribunnews.com/rss/nasional',
-      'https://www.cnnindonesia.com/nasional/rss',
       'https://news.detik.com/rss',
-      'https://www.viva.co.id/rss/nasional',
-      'https://www.kumparan.com/rss/nasional',
-      'https://www.radaronline.id/rss/nasional',
-      'https://www.rmol.id/rss/nasional',
-      'https://www.okezone.com/rss/nasional',
-      'https://www.inews.id/rss/nasional',
+      'https://www.cnnindonesia.com/nasional/rss',
+      'https://www.viva.co.id/rss/indeks/nasional',
+      'https://www.okezone.com/rss/nasional.xml',
       'https://www.antaranews.com/rss/nasional.xml',
-      'https://www.antaranews.com/rss/nasional.xml',
-      'https://www.antaranews.com/rss/nasional.xml',
-      'https://www.antaranews.com/rss/nasional.xml'
+      'https://www.beritasatu.com/nasional/rss',
+      'https://www.tempo.co/rss/nasional',
+      'https://www.radaronline.co.id/feed/',
+      'https://www.suara.com/rss/nasional',
+      'https://www.jpnn.com/index.php?mib=rss&id=5',
+      'https://www.merdeka.com/rss/nasional',
+      'https://www.tribunnews.com/rss/nasional'
     ],
     papua: [
       'https://kabarpapua.co/feed/',
@@ -265,21 +289,21 @@
       'https://www.papuatoday.com/feed/',
       'https://www.tabloidjubi.com/feed/',
       'https://seputarpapua.com/feed/',
-      'https://papuaglobal.com/feed/',
-      'https://www.papua.go.id/rss',
-      'https://www.rri.co.id/rss/regional/papua',
-      'https://www.tribunnews.com/rss/regional/papua',
-      'https://www.antaranews.com/rss/regional/papua',
-      'https://www.viva.co.id/rss/regional/papua',
-      'https://www.merdeka.com/rss/regional/papua',
-      'https://www.sindonews.com/feed/regional/papua',
-      'https://www.jpnn.com/index.php?mib=rss&id=6',
-      'https://news.detik.com/rss/papua',
-      'https://www.cnnindonesia.com/nasional/rss/papua',
-      'https://papua.tribunnews.com/rss',
-      'https://papuapos.com/rss',
-      'https://www.radaronline.id/rss/regional/papua',
-      'https://www.liputan6.com/rss/regional/papua'
+      'https://www.papuaexpress.co/feed/',
+      'https://www.beritapapua.id/feed/',
+      'https://www.papuanews.co/feed/',
+      'https://www.suarapapua.com/feed/',
+      'https://www.papuainformasibaru.com/feed/',
+      'https://www.papua24.com/feed/',
+      'https://www.tribunnews.com/rss/papua',
+      'https://www.antaranews.com/rss/regional',
+      'https://www.malukunews.co/feed/',
+      'https://regional.kompas.com/rss',
+      'https://www.liputan6.com/rss/regional',
+      'https://daerah.sindonews.com/rss',
+      'https://beritamalukuonline.com/feed/',
+      'https://www.satumaluku.id/feed/',
+      'https://ambonexpress.com/feed/'
     ],
     maluku: [
       'https://beritamalukuonline.com/feed/',
@@ -287,21 +311,21 @@
       'https://ambonexpress.com/feed/',
       'https://kabarindonesianews.com/feed/',
       'https://www.rri.co.id/rss/regional/maluku',
-      'https://www.tribunnews.com/rss/regional/maluku',
-      'https://www.antaranews.com/rss/regional/maluku',
-      'https://www.viva.co.id/rss/regional/maluku',
-      'https://www.jpnn.com/index.php?mib=rss&id=7',
-      'https://www.merdeka.com/rss/regional/maluku',
-      'https://news.detik.com/rss/maluku',
-      'https://www.cnnindonesia.com/nasional/rss/maluku',
-      'https://maluku.tribunnews.com/rss',
-      'https://malukupost.com/rss',
-      'https://www.radaronline.id/rss/regional/maluku',
-      'https://www.sindonews.com/feed/regional/maluku',
-      'https://www.liputan6.com/rss/regional/maluku',
-      'https://www.okezone.com/rss/regional/maluku',
-      'https://www.antaranews.com/rss/regional/maluku',
-      'https://www.antaranews.com/rss/regional/maluku'
+      'https://www.antaranews.com/rss/regional',
+      'https://regional.kompas.com/rss',
+      'https://www.liputan6.com/rss/regional',
+      'https://daerah.sindonews.com/rss',
+      'https://www.malukunews.co/feed/',
+      'https://www.suaramaluku.com/feed/',
+      'https://beritamalukuonline.com/feed/',
+      'https://www.satumaluku.id/feed/',
+      'https://ambonexpress.com/feed/',
+      'https://kabarindonesianews.com/feed/',
+      'https://www.rri.co.id/rss/regional/maluku',
+      'https://www.antaranews.com/rss/regional',
+      'https://regional.kompas.com/rss',
+      'https://www.liputan6.com/rss/regional',
+      'https://daerah.sindonews.com/rss'
     ],
     regional: [
       'https://www.rri.co.id/rss/regional',
@@ -309,21 +333,21 @@
       'https://regional.kompas.com/rss',
       'https://www.liputan6.com/rss/regional',
       'https://daerah.sindonews.com/rss',
-      'https://www.tribunnews.com/rss/daerah',
-      'https://www.jpnn.com/index.php?mib=rss&id=9',
-      'https://www.viva.co.id/rss/regional',
-      'https://news.detik.com/rss/daerah',
-      'https://regional.tempo.co/rss',
-      'https://regional.tribunnews.com/rss',
-      'https://regional.kumparan.com/rss',
+      'https://beritamalukuonline.com/feed/',
+      'https://www.satumaluku.id/feed/',
+      'https://ambonexpress.com/feed/',
+      'https://kabarindonesianews.com/feed/',
+      'https://www.rri.co.id/rss/regional/maluku',
       'https://www.antaranews.com/rss/regional',
-      'https://www.radaronline.id/rss/regional',
-      'https://www.cnnindonesia.com/nasional/rss/regional',
-      'https://www.merdeka.com/rss/regional',
-      'https://www.sindonews.com/feed/regional',
-      'https://www.antaranews.com/rss/regional',
-      'https://www.antaranews.com/rss/regional',
-      'https://www.antaranews.com/rss/regional'
+      'https://regional.kompas.com/rss',
+      'https://www.liputan6.com/rss/regional',
+      'https://daerah.sindonews.com/rss',
+      'https://www.malukunews.co/rss.xml',
+      'https://regional.kompas.com/rss',
+      'https://www.liputan6.com/rss/regional',
+      'https://daerah.sindonews.com/rss',
+      'https://beritamalukuonline.com/feed/',
+      'https://www.satumaluku.id/feed/'
     ],
     internasional: [
       'https://www.antaranews.com/rss/internasional.xml',
@@ -331,21 +355,21 @@
       'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
       'https://www.aljazeera.com/xml/rss/all.xml',
       'https://feeds.bbci.co.uk/news/world/rss.xml',
-      'https://www.cnnindonesia.com/internasional/rss',
-      'https://www.dw.com/id/rss.xml',
-      'https://www.voaindonesia.com/api/epiqq',
-      'https://www.voaindonesia.com/rss',
-      'https://www.republika.co.id/rss/internasional',
-      'https://www.tribunnews.com/rss/internasional',
-      'https://www.jpnn.com/index.php?mib=rss&id=8',
-      'https://www.sindonews.com/feed/internasional',
-      'https://www.antaranews.com/rss/internasional.xml',
-      'https://www.antaranews.com/rss/internasional.xml',
-      'https://www.antaranews.com/rss/internasional.xml',
-      'https://www.antaranews.com/rss/internasional.xml',
-      'https://www.antaranews.com/rss/internasional.xml',
-      'https://www.antaranews.com/rss/internasional.xml',
-      'https://www.antaranews.com/rss/internasional.xml'
+      'https://www.cnn.com/rss/edition_world.rss',
+      'https://www.npr.org/rss/rss.php?id=1004',
+      'https://www.reutersagency.com/feed/?best-sectors=world-news',
+      'https://www.voanews.com/api/zmg-xml',
+      'https://www.theguardian.com/world/rss',
+      'https://www.euronews.com/rss?level=theme&name=world',
+      'https://www.dw.com/en/top-stories/world/s-9097',
+      'https://globalnews.ca/feed/',
+      'https://www.france24.com/en/rss',
+      'https://www.aljazeera.com/xml/rss/all.xml',
+      'https://feeds.npr.org/1004/rss.xml',
+      'https://rss.cnn.com/rss/edition_world.rss',
+      'https://rss.dw.com/xml/rss-en-all.xml',
+      'https://www.bbc.co.uk/news/10628494',
+      'https://www.nytimes.com/services/xml/rss/nyt/World.xml'
     ],
     cyber: [
       'https://www.antaranews.com/rss/tekno.xml',
@@ -353,21 +377,21 @@
       'https://www.cnnindonesia.com/teknologi/rss',
       'https://www.liputan6.com/rss/tekno',
       'https://tekno.tempo.co/rss/it',
-      'https://www.tribunnews.com/tech/rss',
-      'https://www.viva.co.id/rss/tekno',
-      'https://www.sindonews.com/feed/tekno',
-      'https://news.detik.com/rss/tekno',
-      'https://www.jpnn.com/index.php?mib=rss&id=14',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml',
-      'https://www.antaranews.com/rss/tekno.xml'
+      'https://www.theverge.com/rss/index.xml',
+      'https://www.wired.com/feed/rss',
+      'https://feeds.arstechnica.com/arstechnica/index',
+      'https://www.engadget.com/rss.xml',
+      'https://www.gizmodo.com/rss',
+      'https://mashable.com/feed/',
+      'https://thenextweb.com/feed/',
+      'https://www.zdnet.com/news/rss.xml',
+      'https://www.cnet.com/rss/news/',
+      'https://www.techradar.com/rss',
+      'https://www.techcrunch.com/feed/',
+      'https://www.digitaltrends.com/feed/',
+      'https://venturebeat.com/feed/',
+      'https://www.cnet.com/rss/tech/',
+      'https://www.wired.com/feed/rss'
     ],
     hotzone: [
       'https://www.antaranews.com/rss/hukum.xml',
@@ -375,21 +399,21 @@
       'https://news.detik.com/rss',
       'https://www.tribunnews.com/rss/nasional',
       'https://www.jpnn.com/index.php?mib=rss&id=2',
-      'https://www.radaronline.id/rss/hukum',
-      'https://www.viva.co.id/rss/hukum',
-      'https://www.kumparan.com/rss/hukum',
-      'https://www.okezone.com/rss/hukum',
-      'https://www.inews.id/rss/hukum',
-      'https://www.antaranews.com/rss/hukum.xml',
-      'https://www.sindonews.com/feed/hukum',
-      'https://www.tribunnews.com/rss/hukum',
-      'https://www.jpnn.com/index.php?mib=rss&id=3',
-      'https://news.detik.com/rss/hukum',
-      'https://www.antaranews.com/rss/hukum.xml',
-      'https://www.antaranews.com/rss/hukum.xml',
-      'https://www.antaranews.com/rss/hukum.xml',
-      'https://www.antaranews.com/rss/hukum.xml',
-      'https://www.antaranews.com/rss/hukum.xml'
+      'https://www.republika.co.id/rss/nasional',
+      'https://www.liputan6.com/rss/nasional',
+      'https://www.merdeka.com/rss/nasional',
+      'https://www.viva.co.id/rss/indeks/nasional',
+      'https://www.okezone.com/rss/nasional.xml',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://www.beritasatu.com/nasional/rss',
+      'https://www.tempo.co/rss/nasional',
+      'https://www.radaronline.co.id/feed/',
+      'https://www.suara.com/rss/nasional',
+      'https://www.jpnn.com/index.php?mib=rss&id=5',
+      'https://www.merdeka.com/rss/nasional',
+      'https://www.tribunnews.com/rss/nasional',
+      'https://www.antaranews.com/rss/nasional.xml',
+      'https://nasional.kompas.com/rss'
     ],
     ekonomi: [
       'https://www.antaranews.com/rss/ekonomi.xml',
@@ -398,281 +422,323 @@
       'https://finance.detik.com/rss',
       'https://bisnis.tempo.co/rss/nasional',
       'https://www.liputan6.com/rss/ekonomi',
-      'https://www.jpnn.com/index.php?mib=rss&id=10',
-      'https://www.sindonews.com/feed/ekonomi',
-      'https://www.tribunnews.com/rss/ekonomi',
-      'https://www.cnnindonesia.com/ekonomi/rss',
-      'https://www.viva.co.id/rss/ekonomi',
-      'https://www.radaronline.id/rss/ekonomi',
-      'https://www.okezone.com/rss/ekonomi',
+      'https://www.idxchannel.com/rss',
+      'https://www.suara.com/rss/ekonomi',
+      'https://www.kontan.co.id/rss',
+      'https://www.okezone.com/rss/ekonomi.xml',
       'https://www.antaranews.com/rss/ekonomi.xml',
-      'https://www.antaranews.com/rss/ekonomi.xml',
-      'https://www.antaranews.com/rss/ekonomi.xml',
-      'https://www.antaranews.com/rss/ekonomi.xml',
-      'https://www.antaranews.com/rss/ekonomi.xml',
-      'https://www.antaranews.com/rss/ekonomi.xml',
-      'https://www.antaranews.com/rss/ekonomi.xml'
+      'https://ekonomi.kompas.com/rss',
+      'https://www.cnbcindonesia.com/rss',
+      'https://finance.detik.com/rss',
+      'https://bisnis.tempo.co/rss/nasional',
+      'https://www.liputan6.com/rss/ekonomi',
+      'https://www.idxchannel.com/rss',
+      'https://www.suara.com/rss/ekonomi',
+      'https://www.kontan.co.id/rss',
+      'https://www.okezone.com/rss/ekonomi.xml'
     ]
   };
 
-  // Variabel global berita dan filter
+  // Simpan semua berita terakhir untuk filter tanggal
   let allNews = [];
   let filteredNews = [];
   let currentCategory = 'all';
 
-  // Visitor data
-  let visitors = JSON.parse(localStorage.getItem('hanoman_visitors') || '[]');
-  let currentVisitorName = localStorage.getItem('hanoman_currentVisitor') || '';
-
-  // Helper: format tanggal ke YYYY-MM-DD
-  function formatDate(date) {
-    let d = new Date(date);
-    if (isNaN(d)) return '';
-    let mm = (d.getMonth() + 1).toString().padStart(2, '0');
-    let dd = d.getDate().toString().padStart(2, '0');
-    let yyyy = d.getFullYear();
-    return `${yyyy}-${mm}-${dd}`;
+  // Helper function parse date to yyyy-mm-dd
+  function formatDateISO(dateStr){
+    let d = new Date(dateStr);
+    if(isNaN(d)) return '';
+    return d.toISOString().split('T')[0];
   }
 
-  // Ambil berita dari feed rss2json API, untuk tiap url
-  async function loadFeed(url) {
-    try {
-      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
-      const data = await res.json();
-      if(data.status !== 'ok') throw new Error('RSS fetch gagal');
-      return data.items.map(item => ({
-        title: escapeHTML(item.title),
-        thumbnail: item.thumbnail || item.enclosure?.link || '',
-        date: formatDate(item.pubDate),
-        fullDate: item.pubDate,
-        category: '' // nanti diisi kalau perlu
-      }));
-    } catch {
-      return [{title: `Gagal memuat RSS: ${url}`, date: '', category: ''}];
+  // Load RSS dari semua URL kategori (max 20) lalu render
+  async function fetchRSS(category, btn=null){
+    const container = document.getElementById("berita-container");
+    container.innerHTML = "Memuat berita...";
+
+    // Update active button
+    if(btn){
+      document.querySelectorAll('#category-nav button').forEach(b=>{
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
     }
-  }
 
-  // Fetch semua feed dari kategori
-  async function fetchRSS(category) {
     currentCategory = category;
-    document.getElementById('berita-container').innerHTML = 'Memuat berita...';
     allNews = [];
 
-    let feedUrls = [];
     if(category === 'all'){
-      for(let cat in feeds) {
-        feedUrls = feedUrls.concat(feeds[cat]);
+      // Semua kategori semua feeds
+      let promises = [];
+      for(let cat in feeds){
+        feeds[cat].forEach(url => promises.push(loadFeed(url, cat)));
       }
+      const results = await Promise.all(promises);
+      allNews = results.flat();
     } else {
-      feedUrls = feeds[category] || [];
+      let promises = feeds[category].map(url => loadFeed(url, category));
+      const results = await Promise.all(promises);
+      allNews = results.flat();
     }
 
-    // Batasi maksimum 20 sumber max supaya gak overload (jika terlalu banyak)
-    feedUrls = feedUrls.slice(0, 20);
+    // Sort by newest date
+    allNews = allNews.filter(item => item.title && item.date).sort((a,b)=> new Date(b.date) - new Date(a.date));
+    filteredNews = [...allNews];
 
-    // Ambil semua feed dari url feed
-    const promises = feedUrls.map(url => loadFeed(url));
-    let results = await Promise.all(promises);
-    allNews = results.flat();
+    // Show date filters if there's news
+    document.getElementById('filters').style.display = allNews.length > 0 ? 'flex' : 'none';
+    populateDateFilters(allNews);
 
-    // Filter tanggal reset
-    resetAdvancedDateFilter(false);
-
-    renderNews(allNews);
-    document.getElementById('filters').style.display = 'flex';
+    renderNews(filteredNews);
   }
 
-  // Render berita ke grid
-  function renderNews(newsArray) {
-    filteredNews = newsArray;
-    const container = document.getElementById('berita-container');
-    container.innerHTML = '';
+  // Load satu RSS feed via rss2json API
+  async function loadFeed(url, category){
+    try{
+      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+      const data = await res.json();
+      if(!data.items) return [];
+
+      return data.items.map(item => ({
+        title: item.title,
+        thumbnail: item.thumbnail || item.enclosure?.link || '',
+        date: formatDateISO(item.pubDate),
+        fullDate: item.pubDate,
+        category: category
+      }));
+    }catch(e){
+      return [{
+        title: `Gagal memuat RSS: ${url}`,
+        thumbnail: '',
+        date: '',
+        fullDate: '',
+        category: category
+      }];
+    }
+  }
+
+  // Render array berita ke container grid
+  function renderNews(newsArray){
+    const container = document.getElementById("berita-container");
+    container.innerHTML = "";
 
     if(newsArray.length === 0){
-      container.innerHTML = "<p style='text-align:center; color:#0f0;'>Berita tidak ditemukan untuk filter ini.</p>";
+      container.innerHTML = "<i>Tidak ada berita yang sesuai filter.</i>";
       return;
     }
 
     newsArray.forEach(news => {
-      const item = document.createElement('div');
-      item.className = 'news-item';
+      const item = document.createElement("div");
+      item.className = "news-item";
       item.innerHTML = `
-        <div class="category">${news.category || currentCategory || ''}</div>
-        ${news.thumbnail ? `<img src="${news.thumbnail}" alt="thumbnail" loading="lazy" />` : ''}
-        <div><strong>${news.title}</strong></div>
+        <div class="category">${news.category}</div>
+        ${news.thumbnail ? `<img src="${news.thumbnail}" alt="thumbnail"/>` : ''}
+        <strong>${news.title}</strong>
         <div class="date">${news.fullDate}</div>
       `;
       container.appendChild(item);
     });
   }
 
-  // --- Fitur filter tanggal advanced ---
-  function populateYearSelect() {
-    const yearSelect = document.getElementById('filterYear');
-    yearSelect.innerHTML = '<option value="">-- Tahun --</option>';
+  // Date filter helpers
+  function populateDateFilters(newsArray){
     let years = new Set();
+    let months = new Set();
+    let days = new Set();
 
-    allNews.forEach(n => {
+    newsArray.forEach(n => {
       if(n.date){
         years.add(n.date.substring(0,4));
       }
     });
 
+    const yearSelect = document.getElementById('filterYear');
+    const monthSelect = document.getElementById('filterMonth');
+    const daySelect = document.getElementById('filterDay');
+
+    // Reset all
+    yearSelect.innerHTML = '<option value="">Tahun</option>';
+    monthSelect.innerHTML = '<option value="">Bulan</option>';
+    daySelect.innerHTML = '<option value="">Tanggal</option>';
+    monthSelect.disabled = true;
+    daySelect.disabled = true;
+
     Array.from(years).sort((a,b)=>b-a).forEach(y => {
-      let opt = document.createElement('option');
-      opt.value = y;
-      opt.textContent = y;
-      yearSelect.appendChild(opt);
+      const o = document.createElement('option');
+      o.value = y;
+      o.textContent = y;
+      yearSelect.appendChild(o);
     });
   }
 
-  function updateMonthOptions() {
+  function onYearChange(){
     const year = document.getElementById('filterYear').value;
     const monthSelect = document.getElementById('filterMonth');
-    monthSelect.innerHTML = '<option value="">-- Bulan --</option>';
-    document.getElementById('filterDay').innerHTML = '<option value="">-- Hari --</option>';
-    document.getElementById('filterDay').disabled = true;
+    const daySelect = document.getElementById('filterDay');
+
+    monthSelect.disabled = !year;
+    daySelect.disabled = true;
+    daySelect.innerHTML = '<option value="">Tanggal</option>';
 
     if(!year){
-      monthSelect.disabled = true;
-      renderNews(allNews);
+      filteredNews = [...allNews];
+      renderNews(filteredNews);
       return;
     }
-    monthSelect.disabled = false;
 
     let months = new Set();
     allNews.forEach(n => {
-      if(n.date && n.date.startsWith(year)){
+      if(n.date.startsWith(year)){
         months.add(n.date.substring(5,7));
       }
     });
 
-    Array.from(months).sort().forEach(m => {
-      let opt = document.createElement('option');
-      opt.value = m;
-      opt.textContent = m;
-      monthSelect.appendChild(opt);
+    monthSelect.innerHTML = '<option value="">Bulan</option>';
+    Array.from(months).sort().forEach(m=>{
+      const o = document.createElement('option');
+      o.value = m;
+      o.textContent = m;
+      monthSelect.appendChild(o);
     });
+
+    applyDateFilter();
   }
 
-  function updateDayOptions() {
-    const year = document.getElementById('filterYear').value;
+  function onMonthChange(){
     const month = document.getElementById('filterMonth').value;
     const daySelect = document.getElementById('filterDay');
-    daySelect.innerHTML = '<option value="">-- Hari --</option>';
+
+    daySelect.disabled = !month;
+    daySelect.innerHTML = '<option value="">Tanggal</option>';
 
     if(!month){
-      daySelect.disabled = true;
-      renderNews(allNews);
+      applyDateFilter();
       return;
     }
 
-    daySelect.disabled = false;
-
+    const year = document.getElementById('filterYear').value;
     let days = new Set();
+
     allNews.forEach(n => {
-      if(n.date && n.date.startsWith(year + '-' + month)){
+      if(n.date.startsWith(year + '-' + month)){
         days.add(n.date.substring(8,10));
       }
     });
 
-    Array.from(days).sort().forEach(d => {
-      let opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = d;
-      daySelect.appendChild(opt);
+    Array.from(days).sort().forEach(d=>{
+      const o = document.createElement('option');
+      o.value = d;
+      o.textContent = d;
+      daySelect.appendChild(o);
     });
+
+    applyDateFilter();
   }
 
-  function applyAdvancedDateFilter() {
+  function applyAdvancedDateFilter(){
+    applyDateFilter();
+  }
+
+  function applyDateFilter(){
     const year = document.getElementById('filterYear').value;
     const month = document.getElementById('filterMonth').value;
     const day = document.getElementById('filterDay').value;
 
-    let filtered = allNews;
+    filteredNews = allNews.filter(n => {
+      if(!n.date) return false;
+      if(year && !n.date.startsWith(year)) return false;
+      if(month && !n.date.substring(5,7) === month) return false;
+      if(day && !n.date.endsWith(day)) return false;
 
-    if(year) filtered = filtered.filter(n => n.date.startsWith(year));
-    if(month) filtered = filtered.filter(n => n.date.startsWith(year + '-' + month));
-    if(day) filtered = filtered.filter(n => n.date === `${year}-${month}-${day}`);
+      // Correct checks:
+      if(month && n.date.substring(5,7) !== month) return false;
+      if(day && n.date.substring(8,10) !== day) return false;
 
-    renderNews(filtered);
+      return true;
+    });
+
+    renderNews(filteredNews);
   }
 
-  function resetAdvancedDateFilter(clearUI=true){
-    if(clearUI){
-      document.getElementById('filterYear').value = '';
-      document.getElementById('filterMonth').innerHTML = '<option value="">-- Bulan --</option>';
-      document.getElementById('filterMonth').disabled = true;
-      document.getElementById('filterDay').innerHTML = '<option value="">-- Hari --</option>';
-      document.getElementById('filterDay').disabled = true;
-    }
-    renderNews(allNews);
+  function resetAdvancedDateFilter(){
+    document.getElementById('filterYear').value = '';
+    document.getElementById('filterMonth').innerHTML = '<option value="">Bulan</option>';
+    document.getElementById('filterMonth').disabled = true;
+    document.getElementById('filterDay').innerHTML = '<option value="">Tanggal</option>';
+    document.getElementById('filterDay').disabled = true;
+    filteredNews = [...allNews];
+    renderNews(filteredNews);
   }
 
-  // --- Visitor section ---
-  function updateVisitorCount(){
-    const countSpan = document.getElementById('visitor-count');
-    countSpan.textContent = visitors.length;
-    updateVisitorList();
-  }
+  // Visitor Section
+  let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
 
-  function updateVisitorList(){
-    const listDiv = document.getElementById('visitor-list');
+  function updateVisitorUI(){
+    document.getElementById('visitor-count').textContent = visitors.length;
+    const visitorListDiv = document.getElementById('visitor-list');
     if(visitors.length === 0){
-      listDiv.innerHTML = '<i>Belum ada pengunjung yang mengisi nama.</i>';
-      return;
+      visitorListDiv.innerHTML = '<i>Belum ada pengunjung yang mengisi nama.</i>';
+    } else {
+      visitorListDiv.innerHTML = visitors.map(v => `<div>• ${v}</div>`).join('');
     }
-    listDiv.innerHTML = visitors.map(v => escapeHTML(v)).join('<br />');
   }
 
   function addVisitor(){
-    let name = document.getElementById('visitor-name').value.trim();
+    const input = document.getElementById('visitor-name');
+    let name = input.value.trim();
     if(name.length < 2){
-      alert('Nama minimal 2 karakter, bro!');
+      alert('Nama pengunjung minimal 2 karakter, bro!');
+      input.focus();
       return;
     }
-    if(!visitors.includes(name)){
-      visitors.push(name);
-      localStorage.setItem('hanoman_visitors', JSON.stringify(visitors));
-      updateVisitorCount();
+    if(visitors.includes(name)){
+      alert('Nama ini sudah ada, bro.');
+      input.value = '';
+      input.focus();
+      return;
     }
-    document.getElementById('visitor-name').value = '';
+    visitors.push(name);
+    localStorage.setItem('visitors', JSON.stringify(visitors));
+    updateVisitorUI();
+    input.value = '';
   }
 
-  // --- Splash screen logic ---
+  // Splash submit
   function submitName(){
-    let name = document.getElementById('visitor-name-splash').value.trim();
+    const input = document.getElementById('visitor-name-splash');
+    const name = input.value.trim();
     if(name.length < 2){
-      alert('Nama harus minimal 2 karakter, bro!');
+      alert('Nama minimal 2 karakter, bro!');
+      input.focus();
       return;
     }
-    currentVisitorName = name;
-    localStorage.setItem('hanoman_currentVisitor', currentVisitorName);
-
-    if(!visitors.includes(currentVisitorName)){
-      visitors.push(currentVisitorName);
-      localStorage.setItem('hanoman_visitors', JSON.stringify(visitors));
+    localStorage.setItem('visitorName', name);
+    // Save to visitor list if belum ada
+    if(!visitors.includes(name)){
+      visitors.push(name);
+      localStorage.setItem('visitors', JSON.stringify(visitors));
     }
-
-    document.getElementById('splash').style.display = 'none';
     showMainContent();
   }
 
   function showMainContent(){
-    document.getElementById('filters').style.display = 'flex';
-    document.getElementById('visitor-section').style.display = 'block';
-    updateVisitorCount();
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    updateVisitorUI();
     fetchRSS('all');
   }
 
-  // Saat load halaman, cek apakah sudah ada visitor
   window.onload = () => {
-    if(currentVisitorName && currentVisitorName.length >= 2){
-      document.getElementById('splash').style.display = 'none';
+    const savedName = localStorage.getItem('visitorName');
+    if(savedName && savedName.length >= 2){
+      // Jika sudah ada nama, langsung tampilkan konten
+      if(!visitors.includes(savedName)){
+        visitors.push(savedName);
+        localStorage.setItem('visitors', JSON.stringify(visitors));
+      }
       showMainContent();
     }
   };
-
 </script>
 
 </body>
