@@ -192,6 +192,56 @@
       text-transform: uppercase;
       text-shadow: 0 0 3px #000;
     }
+    /* Visitor Section */
+    #visitor-section {
+      margin-top: 40px;
+      text-align: center;
+      color: #0f0;
+      font-family: monospace;
+      user-select: none;
+    }
+    #visitor-section h3 {
+      margin-bottom: 8px;
+    }
+    #visitor-name {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 2px solid #00ff00;
+      color: #0f0;
+      background: #111;
+      margin-left: 10px;
+      font-weight: 700;
+    }
+    #visitor-section button {
+      padding: 7px 14px;
+      margin-left: 10px;
+      background: #111;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    #visitor-section button:hover {
+      background: #ff0000;
+      border-color: #ff0000;
+      color: #111;
+      transform: scale(1.05);
+    }
+    #visitor-list {
+      margin-top: 20px;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #00ff00;
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(0,0,0,0.7);
+      text-align: left;
+    }
+    #visitor-list div {
+      margin: 4px 0;
+    }
   </style>
 </head>
 <body>
@@ -236,6 +286,16 @@
   </div>
 
   <div id="berita-container">Memuat berita terkini...</div>
+
+  <!-- Visitor Section -->
+  <div id="visitor-section">
+    <h3>Pengunjung Website</h3>
+    <p>Total pengunjung: <span id="visitor-count">0</span></p>
+    <label for="visitor-name" style="font-weight:700;">Masukkan nama kamu:</label>
+    <input type="text" id="visitor-name" placeholder="Nama kamu..."/>
+    <button onclick="addVisitor()">Kirim</button>
+    <div id="visitor-list"><i>Belum ada pengunjung yang mengisi nama.</i></div>
+  </div>
 
   <div class="footer">
     &copy; 2025 HANOMAN NEWS - Dibangun untuk ketahanan informasi nasional.
@@ -349,9 +409,9 @@
         'https://www.antarafoto.com/rss/maluku',
         'https://beritamaluku.com/feed/',
         'https://www.ambonpos.com/feed/',
-        'https://malukupost.id/feed/',
-        'https://suaramaluku.com/feed/',
-        'https://www.malukuonline.com/feed/'
+        'https://malukupost.com/rss',
+        'https://www.suarakabarambon.com/feed/',
+        'https://www.rmolmaluku.id/feed/'
       ],
       regional: [
         'https://www.rri.co.id/rss/regional',
@@ -359,21 +419,21 @@
         'https://regional.kompas.com/rss',
         'https://www.liputan6.com/rss/regional',
         'https://daerah.sindonews.com/rss',
-        'https://www.tribunnews.com/rss/regional',
         'https://regional.tempo.co/rss',
+        'https://regional.metrotvnews.com/rss',
+        'https://www.tribunnews.com/rss/regional',
         'https://regional.okezone.com/rss',
         'https://regional.kontan.co.id/rss',
         'https://www.antaranews.com/rss/regional',
         'https://www.cnnindonesia.com/daerah/rss',
-        'https://www.metrotvnews.com/rss/daerah',
-        'https://www.viva.co.id/rss/indeks/regional',
-        'https://www.liputan6.com/rss/daerah',
-        'https://www.jpnn.com/index.php?mib=rss&id=8',
-        'https://regionalnews.id/feed/',
+        'https://www.jpnn.com/index.php?mib=rss&id=16',
+        'https://www.viva.co.id/rss/indeks/daerah',
+        'https://www.beritasatu.com/rss/daerah',
         'https://www.suara.com/rss/daerah',
-        'https://daerah.sindonews.com/feed/',
-        'https://rss.detik.com/index.php/detikcom/regional',
-        'https://news.detik.com/rss/indeks/daerah'
+        'https://www.kumparan.com/rss/daerah',
+        'https://www.radaronline.id/rss/daerah',
+        'https://www.indozone.id/rss/daerah',
+        'https://www.liputan6.com/rss/daerah'
       ],
       cyber: [
         'https://www.antaranews.com/rss/tekno.xml',
@@ -381,21 +441,21 @@
         'https://www.cnnindonesia.com/teknologi/rss',
         'https://www.liputan6.com/rss/tekno',
         'https://tekno.tempo.co/rss/it',
-        'https://www.detik.com/rss/indeks/tekno',
-        'https://www.tribunnews.com/rss/tekno',
-        'https://www.okezone.com/rss/tekno',
-        'https://www.viva.co.id/rss/indeks/tekno',
-        'https://www.suara.com/rss/tekno',
-        'https://www.metrotvnews.com/rss/tekno',
-        'https://www.cnbcindonesia.com/rss/tekno',
-        'https://www.teknoinside.com/feed/',
         'https://www.gizmochina.com/feed/',
-        'https://www.androidauthority.com/feed/',
-        'https://www.techradar.com/rss',
-        'https://www.engadget.com/rss.xml',
         'https://www.theverge.com/rss/index.xml',
+        'https://www.engadget.com/rss.xml',
         'https://www.wired.com/feed/rss',
-        'https://arstechnica.com/feed/'
+        'https://www.techradar.com/rss',
+        'https://arstechnica.com/feed/',
+        'https://www.zdnet.com/news/rss.xml',
+        'https://www.macrumors.com/macrumors.xml',
+        'https://www.cnet.com/rss/news/',
+        'https://www.androidauthority.com/feed/',
+        'https://www.techspot.com/backend.xml',
+        'https://www.techcrunch.com/feed/',
+        'https://thenextweb.com/feed/',
+        'https://www.digitaltrends.com/feed/',
+        'https://www.tomshardware.com/feeds/all'
       ],
       hotzone: [
         'https://www.antaranews.com/rss/hukum.xml',
@@ -403,11 +463,6 @@
         'https://news.detik.com/rss',
         'https://www.tribunnews.com/rss/nasional',
         'https://www.jpnn.com/index.php?mib=rss&id=2',
-        'https://www.sindonews.com/rss/nasional',
-        'https://www.merdeka.com/rss/nasional',
-        'https://www.okezone.com/rss/hukum',
-        'https://www.beritasatu.com/rss/hukum',
-        'https://www.viva.co.id/rss/indeks/hukum',
         'https://www.metrotvnews.com/rss/hukum',
         'https://www.liputan6.com/rss/hukum',
         'https://www.tribunnews.com/rss/hukum',
@@ -417,7 +472,12 @@
         'https://www.kabarindonesia.com/rss/hukum',
         'https://www.suara.com/rss/hukum',
         'https://www.kompas.com/rss/hukum',
-        'https://www.tempo.co/rss/nasional'
+        'https://www.tempo.co/rss/nasional',
+        'https://www.antarafoto.com/rss/hukum',
+        'https://www.beritasatu.com/rss/hukum',
+        'https://www.radaronline.id/rss/hukum',
+        'https://www.kumparan.com/rss/hukum',
+        'https://www.indozone.id/rss/hukum'
       ]
     };
 
@@ -428,12 +488,12 @@
       container.innerHTML = "Memuat berita...";
 
       allLoadedNews = [];
-      resetAdvancedDateFilter(false); // reset tanpa display ulang, karena kita akan display setelah data load
+      resetAdvancedDateFilter(false);
 
       if (category === 'all') {
         let allFeeds = [];
         Object.values(feeds).forEach(arr => allFeeds = allFeeds.concat(arr));
-        allFeeds = allFeeds.slice(0, 100); // limit max 100 feed source to avoid overload
+        allFeeds = allFeeds.slice(0, 100); // batasi max 100 feed untuk performa
 
         Promise.all(allFeeds.map(url => loadFeed(url))).then(results => {
           const combined = results.flat();
@@ -542,7 +602,6 @@
         opt.textContent = y;
         yearSelect.appendChild(opt);
       });
-      // Reset dependent selects
       document.getElementById('filterMonth').innerHTML = '<option value="">--Pilih Bulan--</option>';
       document.getElementById('filterMonth').disabled = true;
       document.getElementById('filterDay').innerHTML = '<option value="">--Pilih Tanggal--</option>';
@@ -623,10 +682,55 @@
       if(display) displayNews(allLoadedNews);
     }
 
-    // Load default semua
+    // Visitor tracking & list
+    let visitors = JSON.parse(localStorage.getItem('hanoman_visitors') || '[]');
+
+    function updateVisitorCount() {
+      document.getElementById('visitor-count').textContent = visitors.length;
+      renderVisitorList();
+    }
+
+    function renderVisitorList() {
+      const listEl = document.getElementById('visitor-list');
+      if(visitors.length === 0) {
+        listEl.innerHTML = '<i>Belum ada pengunjung yang mengisi nama.</i>';
+        return;
+      }
+      listEl.innerHTML = visitors.map(v => `<div>👤 ${escapeHTML(v)}</div>`).join('');
+    }
+
+    function addVisitor() {
+      const input = document.getElementById('visitor-name');
+      const name = input.value.trim();
+      if(name.length < 2) {
+        alert('Nama minimal 2 karakter, bro!');
+        input.focus();
+        return;
+      }
+      if(visitors.includes(name)) {
+        alert('Nama sudah terdaftar, bro!');
+        input.value = '';
+        input.focus();
+        return;
+      }
+      visitors.push(name);
+      localStorage.setItem('hanoman_visitors', JSON.stringify(visitors));
+      input.value = '';
+      updateVisitorCount();
+    }
+
+    // Simple escape untuk keamanan tampilan nama
+    function escapeHTML(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[m];
+      });
+    }
+
+    // Init visitor count saat halaman load
+    updateVisitorCount();
+
+    // Load default semua berita
     fetchRSS('all');
   </script>
 </body>
 </html>
-
-
